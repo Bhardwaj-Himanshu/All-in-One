@@ -1,14 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/weatherApp/weather.css">
-    <title>Document</title>
+    <link rel="icon" href="/static/weather_favicon.svg">
+    <title>Weather App</title>
 </head>
+
 <body>
-    This should be a landing page for this app!
-    Everything looks like it's working!
+    <main>
+        <card>
+            <h1>Weather App</h1>
+            <form>
+                <input type="search" placeholder="Enter the name of the City!" id="city-input">
+                <button>Click Me</button>
+            </form>
+
+            <div class="weather-data" id="weather-data">
+                <div class="icon">
+                    <img src="http://openweathermap.org/img/wn/01d.png" alt="Weather Icon">
+                </div>
+                <div class="temprature">22°C</div>
+                <div class="description">Sunny</div>
+                <div class="more-information">
+                    <div>Feels like 25</div>
+                    <div>Humidity: 40%</div>
+                    <div>Wind Speed: 5 m/s</div>
+                </div>
+            </div>
+        </card>
+    </main>
+
     <script src="/weatherApp/weather.js"></script>
 </body>
+
 </html>

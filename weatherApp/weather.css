@@ -1,3 +1,77 @@
-body{
-    color:blue;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600&family=Poppins:wght@300;400;500;600&display=swap');
+
+:root {
+    --color-light: hsl(0, 0%, 83%);
+}
+
+body {
+    background-color: var(--color-light);
+    margin: 0;
+    font-family: "Montserrat", "sans-serif";
+    color: black;
+    overflow-y: hidden;
+}
+
+main {
+    position: relative;
+    height: 60rem;
+    width: 100%;
+}
+
+main card {
+    background: white;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2rem;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 1rem;
+    text-align: center;
+}
+
+main card form {
+    display: flex;
+    justify-content: center;
+    column-gap: 1rem;
+}
+
+main card form input[type="search"] {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    outline: none;
+    border: 0;
+}
+
+main card form button {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 0;
+    background-color: blue;
+    color: white;
+    cursor: pointer;
+    width: 7rem;
+}
+main card .weather-data img{
+    width:5rem;
+    aspect-ratio: 1/1;
+}
+main card .weather-data .temprature{
+    font-weight: 600;
+    font-size:xx-large;
+    margin-bottom:0.5rem;
+}
+main card .weather-data .more-information {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    column-gap: 2rem;
+    margin-top: 2rem;
+}
+main card .weather-data .more-information div{
+    background:var(--color-light);
+    padding:1rem;
+    border-radius:5px;
 }
