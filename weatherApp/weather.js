@@ -9,7 +9,7 @@ async function getweatherdata(cityvalue){
     try {
         //try and catch to log errors just in case the request is not successful
         // await is used when I want the line to execute and wait for the response from the API server before I execute the line below it.
-       const response=await fetch(`http://api.weatherapi.com/v1/current.json?q=${cityvalue}&key=${apiKey}`);
+       const response=await fetch(`https://api.weatherapi.com/v1/current.json?q=${cityvalue}&key=${apiKey}`);
        if(!response.ok){
         throw new Error("Enter a valid city/Bad network")
        } 
