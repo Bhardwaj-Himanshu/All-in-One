@@ -1,4 +1,4 @@
-/*const apiKey = "d120552a6d9f4d9b9bd115831232608";
+const apiKey = "d120552a6d9f4d9b9bd115831232608";
 const weatherData = document.getElementById('weather-data');
 const cityinput=document.getElementById('city-input');
 const button=document.querySelector('button');
@@ -50,4 +50,4 @@ button.addEventListener('click',async (e)=>{
     console.log(cityvalue);
     const weatherdata= await getweatherdata(cityvalue);
     collection(weatherdata);
-})*/
+})
