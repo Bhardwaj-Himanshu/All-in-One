@@ -1,7 +1,7 @@
 const apiKey = "d120552a6d9f4d9b9bd115831232608";
 const weatherData = document.getElementById('weather-data');
 const cityinput = document.getElementById('city-input');
-const button = document.querySelector('button');
+const button = document.querySelector('.async-button');
 
 const div = document.querySelectorAll('.weather-data .more-information div');
 div.forEach((item) => {
