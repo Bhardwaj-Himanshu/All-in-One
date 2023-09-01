@@ -1,0 +1,43 @@
+body{
+    margin:0;
+    padding:0;
+}
+nav{
+    margin-top: 0;
+    background: red;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+}
+nav a{
+    background-color: white;
+    padding: 0.5rem;
+    border-radius: 3px;
+}
+nav a #cart-quantity{
+    position: absolute;
+    background:black;
+    color:white;
+    top:10px;
+    right:13px;
+    padding:0.1rem;
+    border-radius: 0.1rem;
+}
+main{
+    display: flex;
+    align-items: center;
+    justify-content:space-around;
+    margin-top:1rem;
+}
+main .container{
+    border:5px solid black;
+}
+main .container img{
+    width:220px;
+}
+main .container .desc-flex{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
