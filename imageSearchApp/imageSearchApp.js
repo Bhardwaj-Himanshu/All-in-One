@@ -1,6 +1,7 @@
 const APIKEY="JGcW2u10bRIRaLn3jxRLhWilryp7spwPW6OWdqah4EU";
 const inputdataEl=document.querySelector("#input-data");
 const actionButton=document.querySelector("#action-button");
+const showMore=document.querySelector('.show-more');
 //jotting down the steps
 let page=1;
 const containersbox=document.querySelector("#containers");
@@ -43,5 +44,10 @@ async function fetchdata(){
 actionButton.addEventListener('click',(e)=>{
  e.preventDefault();
  fetchdata();
+})
+
+showMore.addEventListener('click',()=>{
+    page=page+1;
+    fetchdata();
 })
 
