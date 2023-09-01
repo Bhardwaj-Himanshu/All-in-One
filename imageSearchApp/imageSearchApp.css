@@ -28,6 +28,10 @@ main{
     border:5px solid black;
     width:300px;
     margin-bottom:1rem;
+    transition: all 200ms ease-in;
+}
+.seprate-container:hover{
+    transform: scale(0.95);
 }
 .seprate-container p{
     width:300px;
@@ -39,11 +43,15 @@ main{
     height:60%;
     object-fit: cover;
 }
+.seprate-container a{
+    font-style: none;
+}
 .show-more{
     text-align: center;
     position: static;
     bottom:10px;
     left:700px;
+    display:none;
 }
 @media (max-width:768px) {
     top{
