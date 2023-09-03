@@ -29,6 +29,7 @@ main{
     align-items: center;
     justify-content:space-around;
     margin-top:1rem;
+    flex-wrap: wrap;
 }
 main .container{
     border:5px solid black;
@@ -47,4 +48,10 @@ main .container .desc-flex{
 .desc-flex p{
     font-weight: bold;
     margin-left:0.5rem;
+}
+@media screen and (max-width:730px) {
+   main{
+    flex-direction: column;
+    row-gap: 1rem;
+   } 
 }
