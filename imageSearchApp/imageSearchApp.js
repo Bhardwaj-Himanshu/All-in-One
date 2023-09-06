@@ -40,8 +40,17 @@ async function fetchdata(){
         })
     
 }
+inputdataEl.addEventListener('keydown', (e) => {
+    if (e.keyCode === 13) {
+        containersbox.innerHTML = '';
+        e.preventDefault();
+        fetchdata();
+    }
+  }
+)
     
 actionButton.addEventListener('click',(e)=>{
+ containersbox.innerHTML='';
  e.preventDefault();
  fetchdata();
 })
