@@ -5,6 +5,12 @@ body>a{
 }
 body>a button{
     padding:1rem;
+    transition: all 200ms ease-in-out;
+}
+body>a button:hover{
+    transform:scale(1.05);
+    box-shadow:black 5px 5px;
+    border:3px solid black;
 }
 top input[type="search"]{
     width:50%;
