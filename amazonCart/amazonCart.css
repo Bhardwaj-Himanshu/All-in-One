@@ -10,7 +10,7 @@ nav{
     justify-content: space-between;
     padding: 0 1rem;
 }
-body nav>a{
+.home{
     background-color: red;
 }
 body nav>a button{
