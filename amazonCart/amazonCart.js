@@ -7,8 +7,8 @@ const cartquantity=document.querySelector('#cart-quantity');
 
 //Local storage code to retrieve the items data stored in localstorage
 for(let index=0;index<productQuantities.length;index++){
-    const productQuantity=localStorage.getItem(`productquantity ${index}`);
-    const cartQuantity=localStorage.getItem(`cartquantity`)
+    const productQuantity=parseInt(localStorage.getItem(`productquantity ${index}`));
+    const cartQuantity=parseInt(localStorage.getItem(`cartquantity`));
     if(productQuantity || cartQuantity){
         productQuantities[index].innerText=JSON.parse(productQuantity);
         cartquantity.innerText=JSON.parse(cartQuantity);
