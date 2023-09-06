@@ -27,12 +27,6 @@ nav a{
     background-color: white;
     padding: 0.5rem;
     border-radius: 3px;
-    transition: all 200ms ease-in-out;
-}
-nav a:hover{
-    transform:scale(1.05);
-    box-shadow:black 5px 5px;
-    border:3px solid black;
 }
 nav a #cart-quantity{
     position: absolute;
