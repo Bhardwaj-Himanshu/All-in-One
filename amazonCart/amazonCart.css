@@ -49,6 +49,7 @@ main .container{
 }
 main .container img{
     width:220px;
+    height:260px;
 }
 main .container .desc-flex{
     display: flex;
