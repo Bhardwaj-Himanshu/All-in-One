@@ -1,10 +1,11 @@
-const currentPage=window.location.pathname;
+document.addEventListener('DOMContentLoaded',function(){
+    const currentPage=window.location.pathname;
 
 //On click event I need to update the product quantity
-const plusbuttons=document.querySelectorAll('#plus');
-const minusbuttons=document.querySelectorAll('#minus');
+const plusbuttons=document.querySelectorAll('.plus');
+const minusbuttons=document.querySelectorAll('.minus');
 //this below will return a nodelist which can be accessed using forEach loop
-const productQuantities=document.querySelectorAll('#product-quantity');
+const productQuantities=document.querySelectorAll('.product-quantity');
 const cartquantity=document.querySelector('#cart-quantity');
 const bin=document.querySelectorAll(".end");
 const cartContainers=document.querySelectorAll('.cart-container');
@@ -21,13 +22,16 @@ function handleHomePage(){
     
     //Local storage code to retrieve the items data stored in localstorage
     for(let index=0;index<productQuantities.length;index++){
-        const productQuantity=parseInt(localStorage.getItem(`productquantity ${index}`));
-        const cartQuantity=parseInt(localStorage.getItem(`cartquantity`));
+        const productQuantity=localStorage.getItem(`productquantity ${index}`);
+        const cartQuantity=localStorage.getItem(`cartquantity`);
         if(productQuantity || cartQuantity){
             productQuantities[index].innerText=JSON.parse(productQuantity);
             cartquantity.innerText=JSON.parse(cartQuantity);
         }
+        console.log(productQuantity);
+        console.log(cartQuantity);
     }
+    
     
     plusbuttons.forEach((plusbutton,index)=>{
         plusbutton.addEventListener('click',()=>{
@@ -53,44 +57,61 @@ function handleHomePage(){
 }
 
 function handleCartPage(){
-    cartContainers.forEach((container)=>{
+    console.log(plusbuttons);
+    // accessing the locally stored data using getItem
+    for(let index=0;index<productQuantities.length;index++){
+        const productQuantity=localStorage.getItem(`productquantity ${index}`);
+        const cartQuantity=localStorage.getItem(`cartquantity`);
+        if(productQuantity || cartQuantity){
+            productQuantities[index].innerText=JSON.parse(productQuantity);
+            cartquantity.innerText=JSON.parse(cartQuantity);
+        }
+        console.log(productQuantity);
+        console.log(cartQuantity);
+    }
+
+    /*cartContainers.forEach((container)=>{
         container.outerHTML="";
-    })
+    })*/
 // Now we need to delete the product,everytime someone clicks on the bin icon in cart
-    bin.forEach((trashItem,index)=>{
-        trashItem.addEventListener('click',()=>{
+    bin.forEach((binItem,index)=>{
+        binItem.addEventListener('click',()=>{
            cartContainers[index].outerHTML="";
         })
     })
-    let index=0;
-    let currentquantity=parseInt(productQuantities[index].innerText);
-    if(currentquantity>=1){
-        const cartContainer=document.createElement('div');
-        cartContainer.classList.add('cart-container');
-        
-        const cartImage=document.createElement('img');
-        cartImage.classList.add('start');
-        cartImage.src=productImages[index];
-
-        const cartItemDescription=document.createElement('p');
-        cartItemDescription.classList.add('middle');
-        cartItemDescription.innerText=productQuantities[index].innerText;
-
-        const binImage=document.createElement('img');
-        binImage.classList.add('end');
-        binImage.src="../static/trash.svg";
-
-        cartContainer.appendChild(cartImage);
-        cartContainer.appendChild(cartItemDescription);
-        cartContainer.appendChild(binImage);
-        cartContainers.appendChild(cartContainer);
-    }
     
+    console.log(productQuantities.length)
+    for(let index=0;index<productQuantities.length;index++){
+        let currentquantity=parseInt(productQuantities[index].innerText);
+        
+        if(currentquantity>=1){
+            const cartContainer=document.createElement('div');
+            cartContainer.classList.add('cart-container');
+            
+            const cartImage=document.createElement('img');
+            cartImage.classList.add('start');
+            cartImage.src=productImages[index];
+    
+            const cartItemDescription=document.createElement('p');
+            cartItemDescription.classList.add('middle');
+            cartItemDescription.innerText=productQuantities[index].innerText;
+    
+            const binImage=document.createElement('img');
+            binImage.classList.add('end');
+            binImage.src="../static/trash.svg";
+    
+            cartContainer.appendChild(cartImage);
+            cartContainer.appendChild(cartItemDescription);
+            cartContainer.appendChild(binImage);
+            cartContainers.appendChild(cartContainer);
+        }
+    }
 }
 
 if (currentPage.endsWith('/amazonCart.html')) {
-    handleHomePage();
+    handleHomePage();    
 } else if (currentPage.endsWith('/cartview.html')) {
     handleCartPage();
 }
 
+})
