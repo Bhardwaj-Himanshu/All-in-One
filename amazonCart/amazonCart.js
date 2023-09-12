@@ -19,7 +19,7 @@ const productImages=[
 
 function handleHomePage(){
     
-    
+    localStorage.setItem('productQuantities',JSON.stringify(productQuantities.length))
     //Local storage code to retrieve the items data stored in localstorage
     for(let index=0;index<productQuantities.length;index++){
         const productQuantity=localStorage.getItem(`productquantity ${index}`);
@@ -28,8 +28,8 @@ function handleHomePage(){
             productQuantities[index].innerText=JSON.parse(productQuantity);
             cartquantity.innerText=JSON.parse(cartQuantity);
         }
-        console.log(productQuantity);
-        console.log(cartQuantity);
+        //console.log(productQuantity);
+        //console.log(cartQuantity);
     }
     
     
@@ -57,22 +57,22 @@ function handleHomePage(){
 }
 
 function handleCartPage(){
-    console.log(plusbuttons);
+    const cartProductQuantitiesUsage=localStorage.getItem('productQuantities');
+    const fuckinNumber=JSON.parse(cartProductQuantitiesUsage);
+    console.log(fuckinNumber);
     // accessing the locally stored data using getItem
-    for(let index=0;index<productQuantities.length;index++){
+    for(let index=0;index<fuckinNumber;index++){
         const productQuantity=localStorage.getItem(`productquantity ${index}`);
         const cartQuantity=localStorage.getItem(`cartquantity`);
         if(productQuantity || cartQuantity){
-            productQuantities[index].innerText=JSON.parse(productQuantity);
-            cartquantity.innerText=JSON.parse(cartQuantity);
+            // productQuantities[index].innerText=JSON.parseInt(productQuantity);
+            // cartquantity.innerText=JSON.parseInt(cartQuantity);
         }
-        console.log(productQuantity);
-        console.log(cartQuantity);
     }
 
-    /*cartContainers.forEach((container)=>{
+    cartContainers.forEach((container)=>{
         container.outerHTML="";
-    })*/
+    })
 // Now we need to delete the product,everytime someone clicks on the bin icon in cart
     bin.forEach((binItem,index)=>{
         binItem.addEventListener('click',()=>{
@@ -80,8 +80,7 @@ function handleCartPage(){
         })
     })
     
-    console.log(productQuantities.length)
-    for(let index=0;index<productQuantities.length;index++){
+    for(let index=0;index<fuckinNumber;index++){
         let currentquantity=parseInt(productQuantities[index].innerText);
         
         if(currentquantity>=1){
@@ -109,9 +108,9 @@ function handleCartPage(){
 }
 
 if (currentPage.endsWith('/amazonCart.html')) {
-    handleHomePage();    
+    handleHomePage(); 
+    console.log(productQuantities.length)   
 } else if (currentPage.endsWith('/cartview.html')) {
     handleCartPage();
 }
-
 })
