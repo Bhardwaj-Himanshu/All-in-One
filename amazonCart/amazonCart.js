@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded',function(){
+/*document.addEventListener('DOMContentLoaded',function(){
     const currentPage=window.location.pathname;
 
 //On click event I need to update the product quantity
@@ -70,11 +70,11 @@ function handleCartPage(){
         }
     }
 
-    cartContainers.forEach((container)=>{
+    /*cartContainers.forEach((container)=>{
         container.outerHTML="";
-    })
+    })*/
 // Now we need to delete the product,everytime someone clicks on the bin icon in cart
-    bin.forEach((binItem,index)=>{
+/*    bin.forEach((binItem,index)=>{
         binItem.addEventListener('click',()=>{
            cartContainers[index].outerHTML="";
         })
@@ -113,4 +113,4 @@ if (currentPage.endsWith('/amazonCart.html')) {
 } else if (currentPage.endsWith('/cartview.html')) {
     handleCartPage();
 }
-})
+})*/
