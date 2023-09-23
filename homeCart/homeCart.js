@@ -3,11 +3,11 @@
 const cartBtn = document.querySelector('.cart-btn');
 const closeCartBtn = document.querySelector('.close-cart');
 const clearCartBtn = document.querySelector('.clear-cart');
-const cartDOM = document.querySelector('cart');
-const cartOverlay = document.querySelector('cart-overlay');
-const cartItem = document.querySelector('.cart-item');
+const cartDOM = document.querySelector('.cart');
+const cartOverlay = document.querySelector('.cart-overlay');
+const cartItems = document.querySelector('.cart-items');
 const cartTotal = document.querySelector('.cart-total');
-const cartContent = document.querySelector('.cart-Content');
+const cartContent = document.querySelector('.cart-content');
 const productsDOM = document.querySelector('.products-center');
 
 // Main cart array which we will perform CRUD operations on
@@ -22,7 +22,7 @@ class Products{
     async getProducts(){
     try {
     let result = await fetch('products.json');
-    let returnData = await result.json(); //can use await here aswell
+    let returnData = await result.json();
     let products = returnData.items;
 
     products = products.map(item =>{
@@ -31,6 +31,7 @@ class Products{
         const image=item.fields.image.fields.file.url;
         return {title,price,id,image};
      })
+
     return products;
     } catch (error) {
      console.log(error) 
@@ -40,7 +41,7 @@ class Products{
 // display products
 class UI{
     displayProducts(products){
-      //console.log(products); // could be deleted!
+      
       let result = '';
       products.forEach(product=>{
         result+=`
@@ -82,18 +83,76 @@ class UI{
           // add product to the cart
           cart=[...cart,cartItem];
           //cart.push(cartItem);
-          //console.log(cart);
 
           // save cart in local storage
           Storage.setCart(cart);
           // set cart values
-
+          this.setCartValue(cart);
           // display cart item
-
+          this.addCartItem(cartItem);
           // show the cart
+          this.showCart();
           })
         }
       })
+    }
+    setCartValue(cart){
+      let totalCartPrice=0;
+      let totalCartItems=0;
+      cart.map(item=>{
+        totalCartPrice+= item.price * item.amount;
+        totalCartItems+= item.amount;
+      })
+      cartTotal.innerText = parseFloat(totalCartPrice.toFixed(2));
+      cartItems.innerText = totalCartItems;
+    }
+    addCartItem(item){
+      const div = document.createElement('div');
+      div.classList.add('cart-item');
+      
+      div.innerHTML=`<img src=${item.image} alt="Product">
+      <div>
+          <h4>${item.title}</h4>
+          <h5>$${item.price}</h5>
+          <span class="remove-item" data-id="${item.id}">Remove</span>
+      </div>
+      <div>
+          <i class="fas fa-chevron-up" data-id="${item.id}"></i>
+          <p class="item-amount" data-id="${item.id}">${item.amount}</p>
+          <i class="fas fa-chevron-down" data-id="${item.id}"></i>
+      </div>`
+      cartContent.appendChild(div);
+    }
+    showCart(){
+      cartDOM.classList.add('showCart');
+      cartOverlay.classList.add('transparentBcg');
+    }
+    hideCart(){
+      cartDOM.classList.remove('showCart');
+      cartOverlay.classList.remove('transparentBcg');
+    }
+    populateCart(cart){
+      cart.forEach(item=>{
+        this.addCartItem(item);
+      })
+    }
+    setApp(){
+    cart = Storage.displaySavedCart();
+    this.setCartValue(cart);
+    this.populateCart(cart);
+    cartBtn.addEventListener('click',this.showCart);
+    closeCartBtn.addEventListener('click',this.hideCart);
+    clearCartBtn.addEventListener('click',(e)=>{
+      e.cartContent.innerHTML=`<!--START OF CART-ITEMS-->
+      <!--<div class="cart-item">
+          
+      </div>-->
+      <!--END OF CART-ITEMS-->
+      <div class="cart-footer">
+          <h3>Your Total : $ <span class="cart-total">0</span></h3>
+          <button class="clear-cart banner-btn">Clear Cart</button>
+      </div>`
+    })
     }
 }
 // local storage
@@ -111,12 +170,19 @@ class Storage{
   static setCart(cart){
   localStorage.setItem("Cart",JSON.stringify(cart));
   }
+  static displaySavedCart(){
+  const initialCart=JSON.parse(localStorage.getItem("Cart"))
+  console.log(initialCart);
+  return initialCart?initialCart:[];
+  }
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
   const products = new Products();
   const ui = new UI();
-
+  // Setting up the initial application, which loads the cart data and adds event listners to close cart, remove, add, minus etc.
+  ui.setApp();
+  // Setting up the products, storing all of them in local storage, and calling event listners on the ADD TO CART buttons.
   products.getProducts().then(products=> {
     ui.displayProducts(products);
     Storage.saveProducts(products);
