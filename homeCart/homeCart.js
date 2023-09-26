@@ -142,8 +142,8 @@ class UI{
     this.populateCart(cart);
     cartBtn.addEventListener('click',this.showCart);
     closeCartBtn.addEventListener('click',this.hideCart);
-    clearCartBtn.addEventListener('click',(e)=>{
-      e.cartContent.innerHTML=`<!--START OF CART-ITEMS-->
+    clearCartBtn.addEventListener('click',()=>{
+      cartContent.innerHTML=`<!--START OF CART-ITEMS-->
       <!--<div class="cart-item">
           
       </div>-->
