@@ -1,44 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../weatherApp/weather.css">
-    <link rel="icon" href="../static/weather_favicon.svg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../weatherApp/weather.css" />
+    <link rel="icon" href="../static/weather_favicon.svg" />
     <title>Weather App</title>
-</head>
+  </head>
 
-<body>
-    <div class="home-button">
+  <body>
+    <!-- <div class="home-button">
     <a href="../index.html">
         <button>Home</button>
     </a>
-    </div>
+    </div> -->
     <main>
-        <card>
-            <h1>Weather App</h1>
-            <form>
-                <input type="search" placeholder="Enter the name of the City!" id="city-input">
-                <button class="async-button">Click Me</button>
-            </form>
+      <card>
+        <h1>Weather App</h1>
+        <form>
+          <input
+            type="search"
+            placeholder="Enter the name of the City!"
+            id="city-input"
+          />
+          <button class="async-button">Click Me</button>
+        </form>
 
-            <div class="weather-data" id="weather-data">
-                <div class="icon">
-                    <!--<img src="https://openweathermap.org/img/wn/01d.png" alt="Weather Icon">-->
-                </div>
-                <div class="temperature"><!--22--></div>
-                <div class="description"><!--Sunny--></div>
-                <div class="more-information">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-            </div>
-        </card>
+        <div class="weather-data" id="weather-data">
+          <div class="icon">
+            <!--<img src="https://openweathermap.org/img/wn/01d.png" alt="Weather Icon">-->
+          </div>
+          <div class="temperature"><!--22--></div>
+          <div class="description"><!--Sunny--></div>
+          <div class="more-information">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </card>
     </main>
 
     <script src="../weatherApp/weather.js"></script>
-</body>
-
+  </body>
 </html>
