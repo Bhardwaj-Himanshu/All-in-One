@@ -5,10 +5,7 @@ const width = 15;
 let grid_array = [];
 
 // An alien Invaders array, which contains random numbers, but they get incremeneted
-const alienInvaders = [
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 16, 17, 18, 19, 20, 21, 22, 28, 29, 30, 31,
-  32, 33, 34, 35,
-];
+const alienInvaders = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 // So we are essentially looking for a 15x15 matrix or grid
 for (let i = 0; i < width * width; i++) {
@@ -23,15 +20,20 @@ for (let i = 0; i < width * width; i++) {
 }
 
 setInterval(() => {
+  // Reset every child element inside grid_array to have a color white
+  for (let j = 0; j < grid_array.length; j++) {
+    grid_array[j].style.backgroundColor = 'white';
+  }
+
   for (let i = 0; i < alienInvaders.length; i++) {
-    // We get the element number we need to change
-    const alienIndex = alienInvaders[i];
-    // Then we get the <div> cell from grid_array using element as element index for grid_array
-    const gridCell = grid_array[alienIndex];
-    // change the style to red
-    gridCell.style.backgroundColor = 'red';
-    // increment the alienInvaders
-    alienInvaders[i]++;
+    // Need to check this if condition here
+    if (
+      alienInvaders[alienInvaders.length - 1] <
+      Number(grid_array[grid_array.length - 1].textContent)
+    ) {
+      grid_array[alienInvaders[i]].style.backgroundColor = 'red';
+      alienInvaders[i] += 15;
+    }
   }
   console.log(alienInvaders);
 }, 3000);
