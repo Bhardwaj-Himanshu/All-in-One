@@ -9,7 +9,7 @@ let squares = [];
 let invadersRemoved = [];
 
 // An alien Invaders array, which contains random numbers, but they get incremeneted
-const invadersComing = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+let invadersComing = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
 // So we are essentially looking for a 15x15 matrix or grid
 for (let i = 0; i < width * width; i++) {
@@ -23,18 +23,19 @@ for (let i = 0; i < width * width; i++) {
   squares.push(square);
 }
 
-console.log(squares);
+// console.log(squares);
 
-function draw() {
-  for (let i = 0; i < invadersComing.length; i++) {
-    // Check if the element does not exist/include in invadersRemoved array
-    if (!invadersRemoved.includes(invadersComing[i])) {
-      // Adding a class to sqaure elements matching the alienInvaders
-      squares[invadersComing[i]].classList.add('invader');
-    }
-  }
-}
-draw();
+/* ----------This part of code to remove or not----------------------*/
+// function draw() {
+//   for (let i = 0; i < invadersComing.length; i++) {
+//     // Check if the element does not exist/include in invadersRemoved array
+//     if (!invadersRemoved.includes(invadersComing[i])) {
+//       // Adding a class to sqaure elements matching the alienInvaders
+//       squares[invadersComing[i]].classList.add('invader');
+//     }
+//   }
+// }
+// draw();
 
 /*The function below could be shortened */
 let shooter = squares[currentShooterIndex];
@@ -103,4 +104,27 @@ function moveShooterRight() {
   }
 }
 
-function moveEnemies() {}
+function moveEnemies() {
+  if (invadersComing[0] < 209) {
+    // Remove 'invader' class from the squares above the current invader positions
+    for (let j = 0; j < invadersComing.length; j++) {
+      if (invadersComing[j] - 15 >= 0) {
+        squares[invadersComing[j] - 15].classList.remove('invader');
+      }
+    }
+
+    // Move the invaders and update the class
+    for (let i = 0; i < invadersComing.length; i++) {
+      squares[invadersComing[i]].classList.add('invader');
+      invadersComing[i] += 15;
+    }
+  } else {
+    // Reset the invaders to the top row
+    invadersComing = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+
+    // Remove 'invader' class from all squares
+    squares.forEach((square) => square.classList.remove('invader'));
+  }
+}
+
+// setInterval(moveEnemies, 2000);
