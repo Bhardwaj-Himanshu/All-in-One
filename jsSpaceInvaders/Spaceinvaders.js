@@ -9,7 +9,7 @@ let squares = [];
 let invadersRemoved = [];
 
 // An alien Invaders array, which contains random numbers, but they get incremeneted
-let invadersComing = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+let invadersComing = [5, 6, 7, 8, 9, 10];
 
 // So we are essentially looking for a 15x15 matrix or grid
 for (let i = 0; i < width * width; i++) {
@@ -25,17 +25,16 @@ for (let i = 0; i < width * width; i++) {
 
 // console.log(squares);
 
-/* ----------This part of code to remove or not----------------------*/
-// function draw() {
-//   for (let i = 0; i < invadersComing.length; i++) {
-//     // Check if the element does not exist/include in invadersRemoved array
-//     if (!invadersRemoved.includes(invadersComing[i])) {
-//       // Adding a class to sqaure elements matching the alienInvaders
-//       squares[invadersComing[i]].classList.add('invader');
-//     }
-//   }
-// }
-// draw();
+function draw() {
+  for (let i = 0; i < invadersComing.length; i++) {
+    // Check if the element does not exist/include in invadersRemoved array
+    if (!invadersRemoved.includes(invadersComing[i])) {
+      // Adding a class to sqaure elements matching the alienInvaders
+      squares[invadersComing[i]].classList.add('invader');
+    }
+  }
+}
+draw();
 
 /*The function below could be shortened */
 let shooter = squares[currentShooterIndex];
@@ -104,26 +103,63 @@ function moveShooterRight() {
   }
 }
 
+function removeInvaders() {
+  for (let i = 0; i < invadersComing.length; i++) {
+    squares[invadersComing[i]].classList.remove('invader');
+  }
+}
+
+function moveInvadersDown() {
+  for (let i = 0; i < invadersComing.length; i++) {
+    removeInvaders();
+    invadersComing[i] += 15;
+    draw();
+  }
+}
+
+function moveInvadersRight(n = 1) {
+  for (let i = 0; i < invadersComing.length; i++) {
+    removeInvaders();
+    invadersComing[i] += n;
+    draw();
+  }
+}
+
+function moveInvadersLeft(n = 1) {
+  for (let j = 0; j < invadersComing.length; j++) {
+    removeInvaders();
+    invadersComing[j] -= n;
+    draw();
+  }
+}
+
+let moveRight = true; // Flag to track movement direction
+
 function moveEnemies() {
-  if (invadersComing[0] < 209) {
-    // Remove 'invader' class from the squares above the current invader positions
-    for (let j = 0; j < invadersComing.length; j++) {
-      if (invadersComing[j] - 15 >= 0) {
-        squares[invadersComing[j] - 15].classList.remove('invader');
-      }
-    }
+  // Determine if invaders hit left or right edge
+  const leftEdge = invadersComing[0] % width === 0;
 
-    // Move the invaders and update the class
-    for (let i = 0; i < invadersComing.length; i++) {
-      squares[invadersComing[i]].classList.add('invader');
-      invadersComing[i] += 15;
+  const rightEdge =
+    invadersComing[invadersComing.length - 1] % width === width - 1;
+
+  if (leftEdge || rightEdge) {
+    // Remove invaders and move them down
+    removeInvaders();
+    moveInvadersDown();
+
+    // Reflect invaders if they hit the edges
+    if (leftEdge) {
+      moveRight = true; // Set movement direction to right
+    } else {
+      moveRight = false; // Set movement direction to left
     }
+  }
+
+  // Move invaders based on movement direction
+  if (moveRight) {
+    setTimeout(moveInvadersRight, 1000);
   } else {
-    // Reset the invaders to the top row
-    invadersComing = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-
-    // Remove 'invader' class from all squares
-    squares.forEach((square) => square.classList.remove('invader'));
+    setTimeout(moveInvadersLeft, 1000);
   }
 }
 
