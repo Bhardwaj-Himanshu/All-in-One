@@ -2,9 +2,13 @@ body {
   background-color: pink;
   display: flex;
   flex-direction: column;
-  row-gap: 7rem;
+  row-gap: 3rem;
   align-items: center;
   justify-content: end;
+}
+
+.active {
+  background-color: aqua;
 }
 
 .grid {
