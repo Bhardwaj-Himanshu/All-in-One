@@ -25,7 +25,7 @@ for (let i = 0; i < width * width; i++) {
 
 // console.log(squares);
 
-function draw() {
+function drawEnemies() {
   for (let i = 0; i < invadersComing.length; i++) {
     // Check if the element does not exist/include in invadersRemoved array
     if (!invadersRemoved.includes(invadersComing[i])) {
@@ -34,12 +34,12 @@ function draw() {
     }
   }
 }
-draw();
+drawEnemies();
 
 /*The function below could be shortened */
 let shooter = squares[currentShooterIndex];
 shooter.classList.add('shooter');
-function shooterWhere() {
+function drawShooter() {
   shooter.classList.remove('shooter');
   shooter = squares[currentShooterIndex];
   shooter.classList.add('shooter');
@@ -66,6 +66,9 @@ document.addEventListener('keydown', (event) => {
     case 'ArrowLeft':
       moveShooterLeft();
       break;
+    case 'x':
+      shoot();
+      break;
   }
 });
 
@@ -75,31 +78,35 @@ function moveShooterUp() {
   // One way is when moves up, I deduct 15 indexes from the shooter variable
   if (currentShooterIndex >= width) {
     currentShooterIndex -= 15;
-    shooterWhere();
-    console.log('Shooter Moves Up');
+    drawShooter();
+    console.log(currentShooterIndex);
+    // console.log('Shooter Moves Up');
   }
 }
 function moveShooterDown() {
   if (currentShooterIndex + width < squares.length) {
     currentShooterIndex += 15;
-    shooterWhere();
-    console.log('Shooter Moves Down');
+    drawShooter();
+    console.log(currentShooterIndex);
+    // console.log('Shooter Moves Down');
   }
 }
 function moveShooterLeft() {
   // You can only get 0 at the left edge 0,15,30.....
   if (currentShooterIndex % width !== 0) {
     currentShooterIndex -= 1;
-    shooterWhere();
-    console.log('Shooter Moves Left');
+    drawShooter();
+    console.log(currentShooterIndex);
+    // console.log('Shooter Moves Left');
   }
 }
 function moveShooterRight() {
   // You'll get multiple of width-1 as remainder
   if (currentShooterIndex % width !== width - 1) {
     currentShooterIndex += 1;
-    shooterWhere();
-    console.log('Shooter Moves Right');
+    drawShooter();
+    console.log(currentShooterIndex);
+    // console.log('Shooter Moves Right');
   }
 }
 
@@ -113,7 +120,7 @@ function moveInvadersDown() {
   for (let i = 0; i < invadersComing.length; i++) {
     removeInvaders();
     invadersComing[i] += 15;
-    draw();
+    drawEnemies();
   }
 }
 
@@ -121,7 +128,7 @@ function moveInvadersRight(n = 1) {
   for (let i = 0; i < invadersComing.length; i++) {
     removeInvaders();
     invadersComing[i] += n;
-    draw();
+    drawEnemies();
   }
 }
 
@@ -129,13 +136,29 @@ function moveInvadersLeft(n = 1) {
   for (let j = 0; j < invadersComing.length; j++) {
     removeInvaders();
     invadersComing[j] -= n;
-    draw();
+    drawEnemies();
   }
 }
 
 let moveRight = true; // Flag to track movement direction
-
 function moveEnemies() {
+  // CHECK IF GAME IS OVER DUE TO LOSING?
+  if (invadersComing.includes(currentShooterIndex)) {
+    clearInterval(movingEnemies);
+    resultDisplay.textContent = 'GAME OVER';
+    removeInvaders();
+    invadersComing = [5, 6, 7, 8, 9, 10];
+    drawEnemies();
+    currentShooterIndex = 217;
+    drawShooter();
+    return;
+  }
+
+  // CHECK IF GAME IS OVER DUE TO WINNING?
+  // if(){
+
+  // }
+
   // Determine if invaders hit left or right edge
   const leftEdge = invadersComing[0] % width === 0;
 
@@ -157,10 +180,27 @@ function moveEnemies() {
 
   // Move invaders based on movement direction
   if (moveRight) {
-    setTimeout(moveInvadersRight, 1000);
+    setTimeout(moveInvadersRight, 200);
   } else {
-    setTimeout(moveInvadersLeft, 1000);
+    setTimeout(moveInvadersLeft, 200);
   }
 }
 
-// setInterval(moveEnemies, 2000);
+function shoot() {
+  let laserIndex = currentShooterIndex;
+
+  let laserInterval = setInterval(() => {
+    if (laserIndex < 0) {
+      clearInterval(laserInterval);
+      laserIndex = currentShooterIndex;
+      return;
+    }
+    squares[laserIndex].classList.remove('laser');
+    laserIndex -= 15;
+    if (laserIndex > 0) {
+      squares[laserIndex].classList.add('laser');
+    }
+  }, 100);
+}
+
+// let movingEnemies = setInterval(moveEnemies, 500);
