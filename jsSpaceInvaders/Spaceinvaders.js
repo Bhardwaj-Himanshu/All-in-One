@@ -43,6 +43,11 @@ function drawEnemies() {
         // Adding a class to sqaure elements matching the alienInvaders
         squares[invadersComing[i]].classList.add('invader');
       }
+    } else if (mediumButton.classList.contains('active')) {
+      if (!invadersRemoved.includes(i)) {
+        // Adding a class to sqaure elements matching the alienInvaders
+        squares[invadersComing[i]].classList.add('invader');
+      }
     } else {
       if (!invadersRemoved.includes(invadersComing[i])) {
         // Adding a class to sqaure elements matching the alienInvaders
@@ -200,7 +205,7 @@ function moveInvadersDown() {
   for (let i = 0; i < invadersComing.length; i++) {
     removeInvaders();
     invadersComing[i] += 15;
-    // invadersRemoved[i] += 15;
+    invadersRemoved[i] += 15;
     drawEnemies();
   }
 }
@@ -209,7 +214,7 @@ function moveInvadersRight(n = 1) {
   for (let i = 0; i < invadersComing.length; i++) {
     removeInvaders();
     invadersComing[i] += n;
-    // invadersRemoved[i] += n;
+    invadersRemoved[i] += n;
     drawEnemies();
   }
 }
@@ -218,7 +223,7 @@ function moveInvadersLeft(n = 1) {
   for (let j = 0; j < invadersComing.length; j++) {
     removeInvaders();
     invadersComing[j] -= n;
-    // invadersRemoved[j] -= n;
+    invadersRemoved[j] -= n;
     drawEnemies();
   }
 }
