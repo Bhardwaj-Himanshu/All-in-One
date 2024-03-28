@@ -2,9 +2,10 @@ body {
   background-color: pink;
   display: flex;
   flex-direction: column;
-  row-gap: 3rem;
+  row-gap: 2rem;
   align-items: center;
-  justify-content: end;
+  /* justify-content: center; */
+  overflow-y: hidden;
 }
 
 .active {

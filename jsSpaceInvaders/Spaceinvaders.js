@@ -3,6 +3,7 @@ const resultDisplay = document.querySelector('.result');
 const levelDiv = document.querySelector('.level');
 const levelButtons = document.querySelectorAll('.level button');
 const easyButton = document.getElementById('Easy');
+const mediumButton = document.getElementById('Medium');
 const hardButton = document.getElementById('Hard');
 const controlButtons = document.querySelectorAll('.controls button');
 
@@ -52,6 +53,12 @@ function drawEnemies() {
 }
 drawEnemies();
 
+function removeInvaders() {
+  for (let i = 0; i < invadersComing.length; i++) {
+    squares[invadersComing[i]].classList.remove('invader');
+  }
+}
+
 /*The function below could be shortened */
 let shooter = squares[currentShooterIndex];
 shooter.classList.add('shooter');
@@ -68,7 +75,7 @@ function drawShooter() {
 // Adding it first to the document
 document.addEventListener('keydown', (event) => {
   // Handling 4 cases with switch-case, could be done with if-else as well
-  console.log(event);
+  // console.log(event);
   switch (event.key) {
     case 'ArrowUp':
       moveShooterUp();
@@ -93,11 +100,31 @@ levelDiv.addEventListener('click', (e) => {
   switch (e.target.textContent) {
     case 'Easy':
       levelButtons.forEach((button) => button.classList.remove('active'));
+      removeInvaders();
       easyButton.classList.add('active');
+      invadersComing = [5, 6, 7, 8, 9, 10];
+      invadersRemoved = [];
+      drawEnemies();
+      break;
+    case 'Medium':
+      levelButtons.forEach((button) => button.classList.remove('active'));
+      removeInvaders();
+      mediumButton.classList.add('active');
+      invadersComing = [
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 30, 45, 60, 75,
+        29, 44, 59, 74, 89, 90, 104, 105, 119, 120, 134, 135, 149, 150, 151,
+        152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164,
+      ];
+      invadersRemoved = [];
+      drawEnemies();
       break;
     case 'Hard':
       levelButtons.forEach((button) => button.classList.remove('active'));
+      removeInvaders();
       hardButton.classList.add('active');
+      invadersComing = [5, 6, 7, 8, 9, 10];
+      invadersRemoved = [];
+      drawEnemies();
       break;
   }
 });
@@ -121,6 +148,9 @@ controlButtons.forEach((button) => {
         invadersComing = [5, 6, 7, 8, 9, 10];
         invadersRemoved = [];
         drawEnemies();
+        resultDisplay.textContent = 0;
+        levelButtons.forEach((e) => e.classList.remove('active'));
+        easyButton.classList.add('active');
         break;
       default:
         break;
@@ -135,7 +165,7 @@ function moveShooterUp() {
   if (currentShooterIndex >= width) {
     currentShooterIndex -= 15;
     drawShooter();
-    console.log(currentShooterIndex);
+    // console.log(currentShooterIndex);
     // console.log('Shooter Moves Up');
   }
 }
@@ -143,7 +173,7 @@ function moveShooterDown() {
   if (currentShooterIndex + width < squares.length) {
     currentShooterIndex += 15;
     drawShooter();
-    console.log(currentShooterIndex);
+    // console.log(currentShooterIndex);
     // console.log('Shooter Moves Down');
   }
 }
@@ -152,7 +182,7 @@ function moveShooterLeft() {
   if (currentShooterIndex % width !== 0) {
     currentShooterIndex -= 1;
     drawShooter();
-    console.log(currentShooterIndex);
+    // console.log(currentShooterIndex);
     // console.log('Shooter Moves Left');
   }
 }
@@ -161,14 +191,8 @@ function moveShooterRight() {
   if (currentShooterIndex % width !== width - 1) {
     currentShooterIndex += 1;
     drawShooter();
-    console.log(currentShooterIndex);
+    // console.log(currentShooterIndex);
     // console.log('Shooter Moves Right');
-  }
-}
-
-function removeInvaders() {
-  for (let i = 0; i < invadersComing.length; i++) {
-    squares[invadersComing[i]].classList.remove('invader');
   }
 }
 
@@ -176,7 +200,7 @@ function moveInvadersDown() {
   for (let i = 0; i < invadersComing.length; i++) {
     removeInvaders();
     invadersComing[i] += 15;
-    invadersRemoved[i] += 15;
+    // invadersRemoved[i] += 15;
     drawEnemies();
   }
 }
@@ -185,7 +209,7 @@ function moveInvadersRight(n = 1) {
   for (let i = 0; i < invadersComing.length; i++) {
     removeInvaders();
     invadersComing[i] += n;
-    invadersRemoved[i] += n;
+    // invadersRemoved[i] += n;
     drawEnemies();
   }
 }
@@ -194,13 +218,20 @@ function moveInvadersLeft(n = 1) {
   for (let j = 0; j < invadersComing.length; j++) {
     removeInvaders();
     invadersComing[j] -= n;
-    invadersRemoved[j] -= n;
+    // invadersRemoved[j] -= n;
     drawEnemies();
   }
 }
 
 let moveRight = true; // Flag to track movement direction
 function moveEnemies() {
+  // CHECK IF GAME IS OVER DUE TO WINNING?
+  // if (invadersComing.length == 0) {
+  //   clearInterval(movingEnemies); // Stop the movement of invaders
+  //   resultDisplay.textContent = 'YOU WIN!'; // Display winning message
+  //   return; // Exit the function
+  // }
+
   // CHECK IF GAME IS OVER DUE TO LOSING?
   if (invadersComing.includes(currentShooterIndex)) {
     clearInterval(movingEnemies);
@@ -212,11 +243,6 @@ function moveEnemies() {
     drawShooter();
     return;
   }
-
-  // CHECK IF GAME IS OVER DUE TO WINNING?
-  // for(let i=0;i<invadersComing.length;i++){
-  //   if(invadersComing[i].classList.includes(''))
-  // }
 
   // Determine if invaders hit left or right edge
   const leftEdge = invadersComing[0] % width === 0;
@@ -264,8 +290,12 @@ function shoot() {
 
         setTimeout(() => {
           squares[laserIndex].classList.remove('boom');
+          resultDisplay.textContent = Number(resultDisplay.textContent) + 1;
           const aliensRemoved = invadersComing.indexOf(laserIndex);
+          // invadersComing.splice(laserIndex, 1);
+          console.log(invadersComing);
           invadersRemoved.push(aliensRemoved);
+          // console.log(invadersRemoved);
         }, 50);
       }
       squares[laserIndex].classList.add('laser');
