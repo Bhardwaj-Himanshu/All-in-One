@@ -3,11 +3,11 @@ const resultDisplay = document.querySelector('.result');
 const levelDiv = document.querySelector('.level');
 const levelButtons = document.querySelectorAll('.level button');
 const easyButton = document.getElementById('Easy');
-const mediumButton = document.getElementById('Medium');
 const hardButton = document.getElementById('Hard');
+const controlButtons = document.querySelectorAll('.controls button');
 
 // Setting the default level of the game
-hardButton.classList.add('active');
+easyButton.classList.add('active');
 
 const width = 15;
 // Our hero shooter index
@@ -37,9 +37,16 @@ for (let i = 0; i < width * width; i++) {
 function drawEnemies() {
   for (let i = 0; i < invadersComing.length; i++) {
     // Check if the element does not exist/include in invadersRemoved array
-    if (!invadersRemoved.includes(squares[invadersRemoved[i]])) {
-      // Adding a class to sqaure elements matching the alienInvaders
-      squares[invadersComing[i]].classList.add('invader');
+    if (easyButton.classList.contains('active')) {
+      if (!invadersRemoved.includes(i)) {
+        // Adding a class to sqaure elements matching the alienInvaders
+        squares[invadersComing[i]].classList.add('invader');
+      }
+    } else {
+      if (!invadersRemoved.includes(invadersComing[i])) {
+        // Adding a class to sqaure elements matching the alienInvaders
+        squares[invadersComing[i]].classList.add('invader');
+      }
     }
   }
 }
@@ -88,15 +95,37 @@ levelDiv.addEventListener('click', (e) => {
       levelButtons.forEach((button) => button.classList.remove('active'));
       easyButton.classList.add('active');
       break;
-    case 'Medium':
-      levelButtons.forEach((button) => button.classList.remove('active'));
-      mediumButton.classList.add('active');
-      break;
     case 'Hard':
       levelButtons.forEach((button) => button.classList.remove('active'));
       hardButton.classList.add('active');
       break;
   }
+});
+
+let movingEnemies;
+/* This is how you addEventListener for multiple items at once*/
+controlButtons.forEach((button) => {
+  button.addEventListener('click', (e) => {
+    switch (e.target.textContent) {
+      case 'Start':
+        movingEnemies = setInterval(moveEnemies, 500);
+        break;
+      case 'Stop':
+        clearInterval(movingEnemies);
+        break;
+      case 'Reset':
+        clearInterval(movingEnemies);
+        removeInvaders();
+        currentShooterIndex = 217;
+        drawShooter();
+        invadersComing = [5, 6, 7, 8, 9, 10];
+        invadersRemoved = [];
+        drawEnemies();
+        break;
+      default:
+        break;
+    }
+  });
 });
 
 /* One main question is how to add constraints so that shooter does not get out of the squares*/
@@ -185,8 +214,8 @@ function moveEnemies() {
   }
 
   // CHECK IF GAME IS OVER DUE TO WINNING?
-  // if(){
-
+  // for(let i=0;i<invadersComing.length;i++){
+  //   if(invadersComing[i].classList.includes(''))
   // }
 
   // Determine if invaders hit left or right edge
@@ -227,27 +256,19 @@ function shoot() {
     }
     squares[laserIndex].classList.remove('laser');
     laserIndex -= 15;
-    if (laserIndex > 0) {
+    if (laserIndex >= 0) {
       if (squares[laserIndex].classList.contains('invader')) {
         squares[laserIndex].classList.remove('laser');
         squares[laserIndex].classList.remove('invader');
         squares[laserIndex].classList.add('boom');
 
-        if (hardButton.classList.contains('active')) {
-          setTimeout(() => {
-            squares[laserIndex].classList.remove('boom');
-            const aliensRemoved = invadersComing.indexOf(laserIndex);
-            invadersRemoved.push(aliensRemoved);
-          }, 50);
-        } else if (mediumButton.classList.contains('active')) {
-          // Need to implement one more bug here
-        } else {
-          // Need to implement the easier method
-        }
+        setTimeout(() => {
+          squares[laserIndex].classList.remove('boom');
+          const aliensRemoved = invadersComing.indexOf(laserIndex);
+          invadersRemoved.push(aliensRemoved);
+        }, 50);
       }
       squares[laserIndex].classList.add('laser');
     }
   }, 100);
 }
-
-// let movingEnemies = setInterval(moveEnemies, 500);
