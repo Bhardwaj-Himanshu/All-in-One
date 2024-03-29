@@ -6,6 +6,12 @@ const easyButton = document.getElementById('Easy');
 const mediumButton = document.getElementById('Medium');
 const hardButton = document.getElementById('Hard');
 const controlButtons = document.querySelectorAll('.controls button');
+const mobilecontrolButtons = document.querySelectorAll('.arrow-keys button');
+const mobileupbutton = document.querySelector('#mobile-up-button');
+const mobiledownbutton = document.querySelector('#mobile-down-button');
+const mobileleftbutton = document.querySelector('#mobile-left-button');
+const mobilerightbutton = document.querySelector('#mobile-right-button');
+const mobileshootButton = document.querySelector('.shoot-button');
 
 // Setting the default level of the game
 easyButton.classList.add('active');
@@ -105,14 +111,17 @@ levelDiv.addEventListener('click', (e) => {
   switch (e.target.textContent) {
     case 'Easy':
       levelButtons.forEach((button) => button.classList.remove('active'));
+      clearInterval(movingEnemies);
       removeInvaders();
       easyButton.classList.add('active');
       invadersComing = [5, 6, 7, 8, 9, 10];
       invadersRemoved = [];
       drawEnemies();
+      resultDisplay.textContent = Number(0);
       break;
     case 'Medium':
       levelButtons.forEach((button) => button.classList.remove('active'));
+      clearInterval(movingEnemies);
       removeInvaders();
       mediumButton.classList.add('active');
       invadersComing = [
@@ -122,14 +131,17 @@ levelDiv.addEventListener('click', (e) => {
       ];
       invadersRemoved = [];
       drawEnemies();
+      resultDisplay.textContent = Number(0);
       break;
     case 'Hard':
       levelButtons.forEach((button) => button.classList.remove('active'));
+      clearInterval(movingEnemies);
       removeInvaders();
       hardButton.classList.add('active');
       invadersComing = [5, 6, 7, 8, 9, 10];
       invadersRemoved = [];
       drawEnemies();
+      resultDisplay.textContent = Number(0);
       break;
   }
 });
@@ -156,6 +168,49 @@ controlButtons.forEach((button) => {
         resultDisplay.textContent = 0;
         levelButtons.forEach((e) => e.classList.remove('active'));
         easyButton.classList.add('active');
+        break;
+      default:
+        break;
+    }
+  });
+});
+
+/*Mobile Event listeners*/
+mobileshootButton.addEventListener('click', () => {
+  mobileshootButton.classList.add('clicked-shoot');
+  shoot();
+});
+
+mobilecontrolButtons.forEach((mobileButton) => {
+  mobileButton.addEventListener('click', (e) => {
+    switch (e.target.innerText) {
+      case '↑':
+        mobilecontrolButtons.forEach((button) =>
+          button.classList.remove('clicked')
+        );
+        mobileupbutton.classList.add('clicked');
+        moveShooterUp();
+        break;
+      case '←':
+        mobilecontrolButtons.forEach((button) =>
+          button.classList.remove('clicked')
+        );
+        mobileleftbutton.classList.add('clicked');
+        moveShooterLeft();
+        break;
+      case '↓':
+        mobilecontrolButtons.forEach((button) =>
+          button.classList.remove('clicked')
+        );
+        mobiledownbutton.classList.add('clicked');
+        moveShooterDown();
+        break;
+      case '→':
+        mobilecontrolButtons.forEach((button) =>
+          button.classList.remove('clicked')
+        );
+        mobilerightbutton.classList.add('clicked');
+        moveShooterRight();
         break;
       default:
         break;
@@ -297,8 +352,8 @@ function shoot() {
           squares[laserIndex].classList.remove('boom');
           resultDisplay.textContent = Number(resultDisplay.textContent) + 1;
           const aliensRemoved = invadersComing.indexOf(laserIndex);
-          // invadersComing.splice(laserIndex, 1);
-          console.log(invadersComing);
+          // invadersComing = invadersComing.filter((e) => e != aliensRemoved);
+          // console.log(invadersComing);
           invadersRemoved.push(aliensRemoved);
           // console.log(invadersRemoved);
         }, 50);
@@ -307,3 +362,9 @@ function shoot() {
     }
   }, 100);
 }
+
+const githubLink =
+  'https://github.com/Bhardwaj-Himanshu/All-in-One/tree/main/jsSpaceInvaders';
+console.log(
+  `Hush, such a saviour , looks like you want to FIX A BUG (I know there are many) but you are the first one on this side quest!\n\n\n Click on the link to head over to the trash factory, where we produce this -->\n\n\n${githubLink}`
+);

@@ -1,11 +1,13 @@
 body {
+  width: 100%;
+  height: 100%;
   background-color: pink;
   display: flex;
   flex-direction: column;
-  row-gap: 2rem;
+  row-gap: 1rem;
   align-items: center;
   /* justify-content: center; */
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 .active {
@@ -42,6 +44,24 @@ body {
   font-weight: bold;
 }
 
+.mobile-controls {
+  display: flex;
+  column-gap: 6rem;
+}
+
+.mobile-controls .arrow-keys {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 0.5rem;
+  column-gap: 1rem;
+}
+
+.mobile-controls div button {
+  width: 3rem;
+  aspect-ratio: 1/1;
+}
+
 .invader {
   background-color: purple;
   border-radius: 10px;
@@ -57,4 +77,51 @@ body {
 
 .boom {
   background-color: red;
+}
+
+@keyframes color-clicked {
+  0% {
+    background-color: lightgray;
+  }
+  100% {
+    background-color: blueviolet;
+  }
+}
+
+@keyframes color-clicked-shoot {
+  0% {
+    background-color: lightgray;
+  }
+  100% {
+    background-color: orange;
+  }
+}
+
+.clicked {
+  background-color: lightgray;
+  animation: color-clicked 0.2s;
+}
+
+.clicked-shoot {
+  background-color: lightgray;
+  animation: color-clicked-shoot 0.2s;
+}
+
+/* Media queries for responsive controls */
+
+@media (min-width: 769px) {
+  /* Show desktop controls on screens wider than 768px */
+  .mobile-controls {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Show mobile controls on screens narrower than 768px */
+  .mobile-controls {
+    display: flex; /* Show mobile controls */
+  }
+  body {
+    overflow-y: visible;
+  }
 }
