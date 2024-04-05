@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  min-height: 100vh; /* Set minimum height to 100% of viewport height */
+  width: 100%;
+}
+
+#canvas {
+}
+#warning-message-phone {
+}
+
+/* @media (min-width: 768px) {
+  #canvas {
+    display: block;
+  }
+  #warning-message-phone {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  #canvas {
+    display: none;
+  }
+  #warning-message-phone {
+    display: block;
+  }
+} */
