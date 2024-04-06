@@ -2,26 +2,14 @@ body {
   margin: 0;
   min-height: 100vh; /* Set minimum height to 100% of viewport height */
   width: 100%;
+  display: grid;
 }
 
 #canvas {
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
 }
-#warning-message-phone {
+#warning-message {
+  place-self: center;
 }
-
-/* @media (min-width: 768px) {
-  #canvas {
-    display: block;
-  }
-  #warning-message-phone {
-    display: none;
-  }
-}
-@media (max-width: 767px) {
-  #canvas {
-    display: none;
-  }
-  #warning-message-phone {
-    display: block;
-  }
-} */
