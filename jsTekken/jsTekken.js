@@ -31,12 +31,17 @@ window.addEventListener('orientationchange', () => {
 window.onload = function () {
   // Simulate orientation change event on load
   window.dispatchEvent(new Event('orientationchange'));
+  player.draw('red');
+  enemy.draw('blue');
 };
 
 // ----------------------EVENT LISTERNERS ---------------------------------------
 document.addEventListener('keydown', (e) => {
   //   console.log(e);
   switch (e.code) {
+    case 'ArrowUp':
+      console.log('Enemy was triggered to Jump');
+      break;
     case 'ArrowRight':
       if (enemy.position.x + canvas.width * 0.2 == canvas.width) {
         console.log("I won't move right anymore.");
@@ -44,7 +49,7 @@ document.addEventListener('keydown', (e) => {
       }
       console.log("I'll move right");
       enemy.undraw(false, true);
-      enemy.update(10, 'blue');
+      enemy.update_X(10, 'blue');
       player.draw('red');
       break;
     case 'ArrowLeft':
@@ -54,7 +59,7 @@ document.addEventListener('keydown', (e) => {
       }
       console.log("I'll move left");
       enemy.undraw(false, true);
-      enemy.update(-10, 'blue');
+      enemy.update_X(-10, 'blue');
       player.draw('red');
     default:
       break;
@@ -64,6 +69,9 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('keydown', (e) => {
   //   console.log(e);
   switch (e.code) {
+    case 'KeyW':
+      console.log('Player was triggered to Jump');
+      break;
     case 'KeyD':
       if (player.position.x + canvas.width * 0.2 == canvas.width) {
         console.log("Player won't move right anymore.");
@@ -71,7 +79,7 @@ document.addEventListener('keydown', (e) => {
       }
       console.log('Player will move right');
       player.undraw(true, false);
-      player.update(10, 'red');
+      player.update_X(10, 'red');
       enemy.draw('blue');
       break;
     case 'KeyA':
@@ -81,7 +89,7 @@ document.addEventListener('keydown', (e) => {
       }
       console.log('Player will move left');
       player.undraw(true, false);
-      player.update(-10, 'red');
+      player.update_X(-10, 'red');
       enemy.draw('blue');
     default:
       break;
@@ -95,6 +103,8 @@ class Sprite {
   constructor({ position, velocity }) {
     this.position = position;
     this.velocity = velocity;
+    this.height = canvas.height * 0.1;
+    this.width = canvas.width * 0.2;
   }
 
   draw(color) {
@@ -127,9 +137,17 @@ class Sprite {
     }
   }
 
-  update(value, color) {
+  update_X(value, color) {
     this.position.x += value;
     this.draw(color);
+  }
+
+  update_Y() {
+    console.log('Nothing was inside me(update_Y) and you called me');
+  }
+
+  jump() {
+    console.log('Nothing was inside me(Jump) and you called me');
   }
 }
 
@@ -153,6 +171,3 @@ const enemy = new Sprite({
     y: 0,
   },
 });
-
-player.draw('red');
-enemy.draw('blue');
