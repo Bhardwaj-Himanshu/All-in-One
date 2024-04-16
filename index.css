@@ -6,12 +6,24 @@ body {
   color: blue;
   background-color: white;
 }
-body h3 {
-  margin-bottom: 1 rem;
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: solid 5px black;
+  width: 100%;
+  height: 10vh;
+  box-sizing: border-box;
+  background-color: orange;
+  padding: 0;
 }
-body p {
-  font-weight: bold;
-  margin-top: 0;
+.heading {
+  font-weight: 600;
+  font-size: 220%;
 }
 .color-instructions {
   margin: 1rem;
@@ -20,6 +32,7 @@ body p {
   display: flex;
   justify-content: space-around;
   margin-bottom: 2rem;
+  margin-top: 5rem;
 }
 .instructions-JS,
 .instructions-React {
@@ -83,4 +96,9 @@ body p {
 .currency-image {
   width: 40%;
   object-fit: cover;
+}
+
+.ending {
+  margin-top: 1rem;
+  margin-left: 1rem;
 }
