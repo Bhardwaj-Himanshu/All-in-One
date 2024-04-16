@@ -25,6 +25,9 @@ body {
   font-weight: 600;
   font-size: 220%;
 }
+.Incomplete {
+  margin-top: 2rem;
+}
 .color-instructions {
   margin: 1rem;
   width: 80%;
