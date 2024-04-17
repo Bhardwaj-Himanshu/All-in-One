@@ -26,6 +26,13 @@ body {
   font-size: 220%;
 }
 .Incomplete {
+  /* margin-top: 2rem; */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 1rem;
+}
+.Incomplete-heading {
   margin-top: 2rem;
 }
 .color-instructions {
@@ -98,6 +105,11 @@ body {
 .password-image,
 .currency-image {
   width: 40%;
+  object-fit: cover;
+}
+
+.chess-image {
+  width: 30%;
   object-fit: cover;
 }
 
