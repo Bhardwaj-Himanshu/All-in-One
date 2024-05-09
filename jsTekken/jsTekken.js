@@ -41,6 +41,8 @@ document.addEventListener('keydown', (e) => {
   switch (e.code) {
     case 'ArrowUp':
       console.log('Enemy was triggered to Jump');
+      enemy.moveUp('blue', 13.5);
+      player.draw('red');
       break;
     case 'ArrowRight':
       if (enemy.position.x + canvas.width * 0.2 == canvas.width) {
@@ -61,6 +63,9 @@ document.addEventListener('keydown', (e) => {
       enemy.undraw(false, true);
       enemy.update_X(-10, 'blue');
       player.draw('red');
+    case 'ArrowDown':
+      enemy.moveDown('blue', 13.5);
+      player.draw('red');
     default:
       break;
   }
@@ -71,6 +76,8 @@ document.addEventListener('keydown', (e) => {
   switch (e.code) {
     case 'KeyW':
       console.log('Player was triggered to Jump');
+      player.moveUp('red', 13.5);
+      enemy.draw('blue');
       break;
     case 'KeyD':
       if (player.position.x + canvas.width * 0.2 == canvas.width) {
@@ -90,6 +97,9 @@ document.addEventListener('keydown', (e) => {
       console.log('Player will move left');
       player.undraw(true, false);
       player.update_X(-10, 'red');
+      enemy.draw('blue');
+    case 'KeyS':
+      player.moveDown('red', 13.5);
       enemy.draw('blue');
     default:
       break;
@@ -143,11 +153,34 @@ class Sprite {
   }
 
   update_Y() {
-    console.log('Nothing was inside me(update_Y) and you called me');
+    this.position.y -= value;
+    this.draw(color);
   }
 
   jump() {
-    console.log('Nothing was inside me(Jump) and you called me');
+    // We'll animate or setInterval until it reaches a specific height let's say this.position.Y-100 or crosses it!
+    // As soon as it does that we start calling it back doing +points in position.Y and then stop if it reaches the end!
+    // Do commment out moveUp() and moveDown() as they are not required!
+    console.log('I am empty and you called me!');
+  }
+
+  moveUp(color, points) {
+    if (this.position.y > 0) {
+      // When called moveUp it reduces the Y coordinate
+      this.undraw(color);
+      // Updates and redraws the player rect
+      this.position.y -= points;
+      this.draw(color);
+    }
+  }
+  moveDown(color, points) {
+    if (this.position.y < 135) {
+      // When called moveUp it reduces the Y coordinate
+      this.undraw(color);
+      // Updates and redraws the player rect
+      this.position.y += points;
+      this.draw(color);
+    }
   }
 }
 

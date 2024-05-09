@@ -5,6 +5,7 @@ body {
   flex-wrap: wrap;
   color: blue;
   background-color: white;
+  font-family: 'JetBrains Mono';
 }
 .header {
   position: fixed;
@@ -79,6 +80,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
+  /* font-size: x-small; */
 }
 .JS {
   background-color: yellow;
