@@ -31,7 +31,7 @@ window.addEventListener('orientationchange', () => {
 window.onload = function () {
   // Simulate orientation change event on load
   window.dispatchEvent(new Event('orientationchange'));
-  player.draw('red');
+  // player.draw('red');
   enemy.draw('blue');
 };
 
@@ -41,7 +41,8 @@ document.addEventListener('keydown', (e) => {
   switch (e.code) {
     case 'ArrowUp':
       console.log('Enemy was triggered to Jump');
-      enemy.moveUp('blue', 13.5);
+      // enemy.moveUp('blue', 13.5);
+      enemy.jump('blue');
       player.draw('red');
       break;
     case 'ArrowRight':
@@ -64,8 +65,8 @@ document.addEventListener('keydown', (e) => {
       enemy.update_X(-10, 'blue');
       player.draw('red');
     case 'ArrowDown':
-      enemy.moveDown('blue', 13.5);
-      player.draw('red');
+    // enemy.moveDown('blue', 13.5);
+    // player.draw('red');
     default:
       break;
   }
@@ -76,8 +77,10 @@ document.addEventListener('keydown', (e) => {
   switch (e.code) {
     case 'KeyW':
       console.log('Player was triggered to Jump');
-      player.moveUp('red', 13.5);
-      enemy.draw('blue');
+      // player.moveUp('red', 13.5);
+      // enemy.draw('blue');
+      enemy.jump('blue');
+      player.draw('red');
       break;
     case 'KeyD':
       if (player.position.x + canvas.width * 0.2 == canvas.width) {
@@ -99,7 +102,7 @@ document.addEventListener('keydown', (e) => {
       player.update_X(-10, 'red');
       enemy.draw('blue');
     case 'KeyS':
-      player.moveDown('red', 13.5);
+      // player.moveDown('red', 13.5);
       enemy.draw('blue');
     default:
       break;
@@ -157,43 +160,65 @@ class Sprite {
     this.draw(color);
   }
 
-  jump() {
+  jump(color) {
+    let originalY = this.position.y;
     // We'll animate or setInterval until it reaches a specific height let's say this.position.Y-100 or crosses it!
+
+    const jumpInterval = setInterval(() => {
+      this.undraw(color);
+      this.position.y = this.position.y - 10;
+      this.draw(color);
+      if (this.position.y <= originalY - 50) {
+        console.log('I need to fall down now');
+        clearInterval(jumpInterval);
+
+        const fallInterval = setInterval(() => {
+          this.undraw();
+          this.position.y += 10;
+          if (this.position.y == originalY) {
+            clearInterval(fallInterval);
+          }
+          this.draw();
+        }, 100);
+      }
+    }, 100);
+
     // As soon as it does that we start calling it back doing +points in position.Y and then stop if it reaches the end!
+
     // Do commment out moveUp() and moveDown() as they are not required!
-    console.log('I am empty and you called me!');
+    console.log('Jumping...');
   }
 
-  moveUp(color, points) {
-    if (this.position.y > 0) {
-      // When called moveUp it reduces the Y coordinate
-      this.undraw(color);
-      // Updates and redraws the player rect
-      this.position.y -= points;
-      this.draw(color);
-    }
-  }
-  moveDown(color, points) {
-    if (this.position.y < 135) {
-      // When called moveUp it reduces the Y coordinate
-      this.undraw(color);
-      // Updates and redraws the player rect
-      this.position.y += points;
-      this.draw(color);
-    }
-  }
+  // moveUp(color, points) {
+  //   if (this.position.y > 0) {
+  //     // When called moveUp it reduces the Y coordinate
+  //     this.undraw(color);
+  //     // Updates and redraws the player rect
+  //     this.position.y -= points;
+  //     this.draw(color);
+  //   }
+  // }
+  // moveDown(color, points) {
+  //   if (this.position.y < 135) {
+  //     // When called moveUp it reduces the Y coordinate
+  //     this.undraw(color);
+  //     // Updates and redraws the player rect
+  //     this.position.y += points;
+  //     this.draw(color);
+  //   }
+  // }
 }
 
-const player = new Sprite({
-  position: {
-    x: 0,
-    y: 135,
-  },
-  velocity: {
-    x: 0,
-    y: 0,
-  },
-});
+// const player = new Sprite({
+//   position: {
+//     x: 0,
+//     y: 135,
+//   },
+//   velocity: {
+//     x: 0,
+//     y: 0,
+//   },
+// });
 const enemy = new Sprite({
   position: {
     x: 240,
