@@ -6,6 +6,11 @@ const context = canvas.getContext('2d');
 // canvas.style.backgroundColor = 'black';
 // canvas.style.width = '100vw';
 // canvas.style.height = '100vh';
+
+context.font = '20px Arial';
+context.fillStyle = 'white';
+context.fillText('Canvas Font!', 80, 50);
+
 // ----------------------------------------------------------------------------------
 
 // -----------------------------SCREEN ON LOAD FUNCTIONS ----------------------------
@@ -31,7 +36,7 @@ window.addEventListener('orientationchange', () => {
 window.onload = function () {
   // Simulate orientation change event on load
   window.dispatchEvent(new Event('orientationchange'));
-  // player.draw('red');
+  player.draw('red');
   enemy.draw('blue');
 };
 
@@ -51,7 +56,7 @@ document.addEventListener('keydown', (e) => {
         break;
       }
       console.log("I'll move right");
-      enemy.undraw(false, true);
+      enemy.undraw();
       enemy.update_X(10, 'blue');
       player.draw('red');
       break;
@@ -61,7 +66,7 @@ document.addEventListener('keydown', (e) => {
         break;
       }
       console.log("I'll move left");
-      enemy.undraw(false, true);
+      enemy.undraw();
       enemy.update_X(-10, 'blue');
       player.draw('red');
     case 'ArrowDown':
@@ -79,8 +84,8 @@ document.addEventListener('keydown', (e) => {
       console.log('Player was triggered to Jump');
       // player.moveUp('red', 13.5);
       // enemy.draw('blue');
-      enemy.jump('blue');
-      player.draw('red');
+      player.jump('red');
+      enemy.draw('blue');
       break;
     case 'KeyD':
       if (player.position.x + canvas.width * 0.2 == canvas.width) {
@@ -88,7 +93,7 @@ document.addEventListener('keydown', (e) => {
         break;
       }
       console.log('Player will move right');
-      player.undraw(true, false);
+      player.undraw();
       player.update_X(10, 'red');
       enemy.draw('blue');
       break;
@@ -98,7 +103,7 @@ document.addEventListener('keydown', (e) => {
         break;
       }
       console.log('Player will move left');
-      player.undraw(true, false);
+      player.undraw();
       player.update_X(-10, 'red');
       enemy.draw('blue');
     case 'KeyS':
@@ -116,8 +121,9 @@ class Sprite {
   constructor({ position, velocity }) {
     this.position = position;
     this.velocity = velocity;
-    this.height = canvas.height * 0.1;
+    this.jumping = false;
     this.width = canvas.width * 0.2;
+    this.height = canvas.height * 0.1;
   }
 
   draw(color) {
@@ -131,23 +137,13 @@ class Sprite {
     );
   }
 
-  undraw(shouldClearPlayer = true, shouldClearEnemy = true) {
-    if (shouldClearPlayer) {
-      context.clearRect(
-        player.position.x,
-        player.position.y,
-        canvas.width * 0.2,
-        canvas.height * 0.1
-      );
-    }
-    if (shouldClearEnemy) {
-      context.clearRect(
-        enemy.position.x,
-        enemy.position.y,
-        canvas.width * 0.2,
-        canvas.height * 0.1
-      );
-    }
+  undraw() {
+    context.clearRect(
+      this.position.x,
+      this.position.y,
+      canvas.width * 0.2,
+      canvas.height * 0.1
+    );
   }
 
   update_X(value, color) {
@@ -161,32 +157,37 @@ class Sprite {
   }
 
   jump(color) {
-    let originalY = this.position.y;
-    // We'll animate or setInterval until it reaches a specific height let's say this.position.Y-100 or crosses it!
+    if (!this.jumping) {
+      // Check if the sprite is not already jumping
+      this.jumping = true; // Set jumping flag to true
+      let originalY = this.position.y;
 
-    const jumpInterval = setInterval(() => {
-      this.undraw(color);
-      this.position.y = this.position.y - 10;
-      this.draw(color);
-      if (this.position.y <= originalY - 50) {
-        console.log('I need to fall down now');
-        clearInterval(jumpInterval);
+      let jumpInterval = setInterval(() => {
+        this.undraw(color);
+        this.position.y = this.position.y - 10;
+        this.draw(color);
+        if (this.position.y <= originalY - 50) {
+          console.log('I need to fall down now');
+          clearInterval(jumpInterval);
 
-        const fallInterval = setInterval(() => {
-          this.undraw();
-          this.position.y += 10;
-          if (this.position.y == originalY) {
-            clearInterval(fallInterval);
-          }
-          this.draw();
-        }, 100);
-      }
-    }, 100);
+          let fallInterval = setInterval(() => {
+            this.undraw();
+            this.position.y += 10;
+            this.draw();
+            if (this.position.y >= 135) {
+              // Check if sprite has reached the ground
+              clearInterval(fallInterval);
+              this.jumping = false; // Reset jumping flag
+            }
+          }, 100);
+        }
+      }, 100);
 
-    // As soon as it does that we start calling it back doing +points in position.Y and then stop if it reaches the end!
+      // As soon as it does that we start calling it back doing +points in position.Y and then stop if it reaches the end!
 
-    // Do commment out moveUp() and moveDown() as they are not required!
-    console.log('Jumping...');
+      // Do commment out moveUp() and moveDown() as they are not required!
+      console.log('Jumping...');
+    }
   }
 
   // moveUp(color, points) {
@@ -209,16 +210,16 @@ class Sprite {
   // }
 }
 
-// const player = new Sprite({
-//   position: {
-//     x: 0,
-//     y: 135,
-//   },
-//   velocity: {
-//     x: 0,
-//     y: 0,
-//   },
-// });
+const player = new Sprite({
+  position: {
+    x: 0,
+    y: 135,
+  },
+  velocity: {
+    x: 0,
+    y: 0,
+  },
+});
 const enemy = new Sprite({
   position: {
     x: 240,
