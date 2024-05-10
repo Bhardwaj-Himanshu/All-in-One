@@ -9,8 +9,13 @@ const context = canvas.getContext('2d');
 
 context.font = '10px MonoSpace';
 context.fillStyle = 'white';
-context.fillText('Delete this text, via moving players', 50, 50);
-
+const heading = context.fillText(
+  'Delete this text, via moving players',
+  50,
+  50
+);
+const enteredText = prompt('Enter something here?');
+const messageToBeDeleted = context.fillText(`${enteredText}`, 50, 70);
 // ----------------------------------------------------------------------------------
 
 // -----------------------------SCREEN ON LOAD FUNCTIONS ----------------------------
@@ -240,3 +245,5 @@ const enemy = new Sprite({
     y: 0,
   },
 });
+
+console.log('Only F12 pressers, know this is supposed to be Fighting Game.');
