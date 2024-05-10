@@ -3,6 +3,7 @@ body {
   min-height: 100vh; /* Set minimum height to 100% of viewport height */
   width: 100%;
   display: grid;
+  font-family: 'VT323';
 }
 
 #canvas {

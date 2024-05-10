@@ -7,9 +7,9 @@ const context = canvas.getContext('2d');
 // canvas.style.width = '100vw';
 // canvas.style.height = '100vh';
 
-context.font = '20px Arial';
+context.font = '10px MonoSpace';
 context.fillStyle = 'white';
-context.fillText('Canvas Font!', 80, 50);
+context.fillText('Delete this text, via moving players', 50, 50);
 
 // ----------------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ window.onload = function () {
 document.addEventListener('keydown', (e) => {
   //   console.log(e);
   switch (e.code) {
-    case 'ArrowUp':
+    case 'ShiftRight':
       console.log('Enemy was triggered to Jump');
       // enemy.moveUp('blue', 13.5);
       enemy.jump('blue');
@@ -69,18 +69,22 @@ document.addEventListener('keydown', (e) => {
       enemy.undraw();
       enemy.update_X(-10, 'blue');
       player.draw('red');
+      break;
+    case 'ArrowUp':
+      enemy.moveUp('blue', 10);
+      break;
     case 'ArrowDown':
-    // enemy.moveDown('blue', 13.5);
-    // player.draw('red');
+      enemy.moveDown('blue', 10);
+      break;
     default:
       break;
   }
 });
 
 document.addEventListener('keydown', (e) => {
-  //   console.log(e);
+  // console.log(e);
   switch (e.code) {
-    case 'KeyW':
+    case 'Space':
       console.log('Player was triggered to Jump');
       // player.moveUp('red', 13.5);
       // enemy.draw('blue');
@@ -106,9 +110,15 @@ document.addEventListener('keydown', (e) => {
       player.undraw();
       player.update_X(-10, 'red');
       enemy.draw('blue');
+      break;
     case 'KeyS':
-      // player.moveDown('red', 13.5);
-      enemy.draw('blue');
+      console.log('Player should move down');
+      player.moveDown('red', 10);
+      break;
+    // enemy.draw('blue');
+    case 'KeyW':
+      player.moveUp('red', 10);
+      break;
     default:
       break;
   }
@@ -171,9 +181,9 @@ class Sprite {
           clearInterval(jumpInterval);
 
           let fallInterval = setInterval(() => {
-            this.undraw();
+            this.undraw(color);
             this.position.y += 10;
-            this.draw();
+            this.draw(color);
             if (this.position.y >= 135) {
               // Check if sprite has reached the ground
               clearInterval(fallInterval);
@@ -190,24 +200,24 @@ class Sprite {
     }
   }
 
-  // moveUp(color, points) {
-  //   if (this.position.y > 0) {
-  //     // When called moveUp it reduces the Y coordinate
-  //     this.undraw(color);
-  //     // Updates and redraws the player rect
-  //     this.position.y -= points;
-  //     this.draw(color);
-  //   }
-  // }
-  // moveDown(color, points) {
-  //   if (this.position.y < 135) {
-  //     // When called moveUp it reduces the Y coordinate
-  //     this.undraw(color);
-  //     // Updates and redraws the player rect
-  //     this.position.y += points;
-  //     this.draw(color);
-  //   }
-  // }
+  moveUp(color, points) {
+    if (this.position.y > 0) {
+      // When called moveUp it reduces the Y coordinate
+      this.undraw();
+      // Updates and redraws the player rect
+      this.position.y -= points;
+      this.draw(color);
+    }
+  }
+  moveDown(color, points) {
+    if (this.position.y < 135) {
+      // When called moveUp it reduces the Y coordinate
+      this.undraw();
+      // Updates and redraws the player rect
+      this.position.y += points;
+      this.draw(color);
+    }
+  }
 }
 
 const player = new Sprite({
