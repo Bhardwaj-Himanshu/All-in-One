@@ -29,6 +29,14 @@ body {
   background-color: green;
 }
 
+.color-gray {
+  background-color: gray;
+}
+
+.color-svg-white {
+  fill: white;
+}
+
 .piece {
   width: 100%;
   height: 100%;
