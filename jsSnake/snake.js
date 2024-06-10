@@ -19,6 +19,7 @@ class Snake {
   constructor(positionArray, color) {
     this.positionArray = [...positionArray];
     this.color = color;
+    this.currentInterval = null;
   }
 
   // Index/ Array value reducers for array as well
@@ -49,6 +50,38 @@ class Snake {
   // a add method --> when snake eats apple we add the index of that cube to the array snake
   add(index) {
     this.positionArray.push(index);
+  }
+
+  // a move() function using which snake moves in the other direction
+  move(increment) {
+    if (this.currentInterval) {
+      clearInterval(this.currentInterval);
+    }
+    this.currentInterval = setInterval(() => {
+      this.undraw();
+      this.reducer(increment);
+      this.draw();
+
+      if (this.gameOver(increment)) {
+        clearInterval(this.currentInterval);
+        console.log(`Game Over due to ${increment}`);
+      }
+    }, 1000);
+  }
+
+  // game-Over function() which checks if game is over due to collision, currently only with walls
+  gameOver(increment) {
+    let head = this.positionArray[0];
+    if (
+      head <= 9 ||
+      head >= 90 ||
+      (increment == -1 && head % 10 == 0) ||
+      (increment == 1 && head % 10 == 9)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
@@ -82,46 +115,36 @@ class Apple {
   }
 }
 
-let snake = new Snake([50], 'green');
-let apple = new Apple(0, 'red');
-
-snake.draw();
-apple.draw();
-
 document.addEventListener('keydown', (e) => {
   switch (e.code) {
     case 'ArrowUp':
-      snake.undraw();
-      // Figure out the logic for collision up
       if (snake.positionArray[0] > 9) {
-        snake.reducer(-10);
+        snake.move(-10);
       }
-      snake.draw();
       break;
     case 'ArrowDown':
-      snake.undraw();
-      // Figure out the logic for collision down
-      // includes() can only check for one item
       if (snake.positionArray[0] < 90) {
-        snake.reducer(10);
+        snake.move(10);
       }
-      snake.draw();
       break;
     case 'ArrowLeft':
-      snake.undraw();
-      if (snake.positionArray[0] % 10 != 0) {
-        snake.reducer(-1);
+      if (snake.positionArray[0] % 10 !== 0) {
+        snake.move(-1);
       }
-      snake.draw();
       break;
     case 'ArrowRight':
-      snake.undraw();
-      if (snake.positionArray[0] % 10 != 9) {
-        snake.reducer(1);
+      if (snake.positionArray[0] % 10 !== 9) {
+        snake.move(1);
       }
-      snake.draw();
       break;
     default:
       break;
   }
 });
+
+let snake = new Snake([50], 'green');
+let apple = new Apple(0, 'red');
+
+snake.draw();
+// snake.move(1);
+apple.draw();
