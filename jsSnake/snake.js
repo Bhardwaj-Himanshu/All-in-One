@@ -1,5 +1,7 @@
 let canvas = document.getElementById('canvas');
+let scoreDisplay = document.getElementById('score-display');
 let ids = [];
+let score = 0;
 
 for (let i = 0; i < 100; i++) {
   let canvasCube = document.createElement('div');
@@ -27,10 +29,14 @@ class Snake {
     // for (let i = 0; i < this.positionArray.length; i++) {
     //   this.positionArray[i] += value;
     // }
-    this.positionArray.pop(); // Remove the tail
-    // console.log(`After pop ${this.positionArray}`);
-    this.positionArray.unshift(this.positionArray[0] + value);
-    // console.log(`After unshift ${this.positionArray}`);
+    if (this.positionArray.length > 1) {
+      this.positionArray.pop(); // Remove the tail
+      // console.log(`After pop ${this.positionArray}`);
+      this.positionArray.unshift(this.positionArray[0] + value);
+      // console.log(`After unshift ${this.positionArray}`);
+    } else {
+      this.positionArray[0] += value;
+    }
   }
 
   // draws the snake on the respective cubes
@@ -158,6 +164,23 @@ class Apple {
   }
 }
 
+function appleDrawer_gameIncrementor(a, s) {
+  if (a.position == s.positionArray[0]) {
+    console.log(s.positionArray);
+    a.undraw();
+    s.add(a.position);
+    console.log(s.positionArray);
+    s.draw();
+    console.log(s.positionArray);
+    a.newPosition();
+    a.draw();
+    score++;
+    scoreDisplay.textContent = score;
+    return true;
+  }
+  return false;
+}
+
 document.addEventListener('keydown', (e) => {
   console.log(e.code);
   switch (e.code) {
@@ -189,9 +212,16 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-let snake = new Snake([54, 53, 52, 51], 'green');
+let snake = new Snake([54], 'green');
 let apple = new Apple(0, 'red');
 
 snake.draw();
 // snake.move(1);
 apple.draw();
+
+setInterval(() => {
+  let result = appleDrawer_gameIncrementor(apple, snake);
+  if (result) {
+    console.log('Apple should be redrawn.');
+  }
+}, 50);
