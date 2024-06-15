@@ -8,10 +8,11 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  row-gap: 2rem;
+  row-gap: 1rem;
   align-items: center;
   justify-content: center;
   margin: 0;
+  background-color: pink;
 }
 
 #canvas {
@@ -23,6 +24,7 @@ body {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
+  background-color: white;
 }
 
 .canvas-cubes {
@@ -51,4 +53,15 @@ body {
 #controls-row {
   display: flex;
   column-gap: 3rem;
+}
+
+@media (max-width: 768px) {
+  #controls {
+    display: block;
+  }
+}
+@media (min-width: 769px) {
+  #controls {
+    display: none;
+  }
 }

@@ -1,6 +1,7 @@
 let canvas = document.getElementById('canvas');
 let scoreDisplay = document.getElementById('score-display');
-let ids = [];
+let gridButtons = document.querySelectorAll('.grid-button');
+// let ids = [];
 let score = 0;
 
 for (let i = 0; i < 100; i++) {
@@ -8,8 +9,9 @@ for (let i = 0; i < 100; i++) {
   canvasCube.classList.add('canvas-cubes');
   // setAttribute() below automatically converts i as string even though it is an int.
   canvasCube.setAttribute('id', i);
-  ids.push(i);
-  canvasCube.textContent = i;
+  canvasCube.style.border = 'none';
+  // ids.push(i);
+  // canvasCube.textContent = i;
   canvas.appendChild(canvasCube);
 }
 
@@ -87,7 +89,7 @@ class Snake {
     this.currentInterval = setInterval(() => {
       if (this.gameOver(increment)) {
         clearInterval(this.currentInterval);
-        console.log(`Game Over due to ${increment}`);
+        // console.log(`Game Over due to ${increment}`);
         return;
       }
       this.undraw(); // undrawing on the tail and not the complete array
@@ -126,6 +128,12 @@ class Snake {
     // }
     let head = this.positionArray[0] + increment;
     return (
+      (() => {
+        if (head > 0 && head < 100) {
+          return canvasCubes[head].style.backgroundColor == 'green';
+        }
+        return false;
+      })() ||
       head < 0 ||
       head >= 100 ||
       (increment === -1 && head % 10 === 9) ||
@@ -141,9 +149,13 @@ class Apple {
   }
 
   // A method that generates new random position and updates the this.position
-  newPosition() {
+  newPosition(snake) {
     this.position = Math.floor(Math.random() * 100);
-    return this.position;
+    if (!snake.positionArray.includes(this.position)) {
+      return this.position;
+    }
+    // this.position = Math.floor(Math.random() * 100);
+    this.newPosition(snake);
   }
 
   // Apple will have a draw() method similar to snake
@@ -163,16 +175,20 @@ class Apple {
     }
   }
 }
-
-function appleDrawer_gameIncrementor(a, s) {
+canvasCubes[-1] = document.createElement('div');
+async function appleDrawer_gameIncrementor(a, s) {
   if (a.position == s.positionArray[0]) {
     console.log(s.positionArray);
     a.undraw();
-    s.add(a.position);
+    s.add(s.positionArray[s.positionArray.length - 1]);
+    // s.add(0);
+    // s.add(-1);
     console.log(s.positionArray);
     s.draw();
+    // console.log(canvasCubes[a.position].id);
+    // canvasCubes[a.position].style.backgroundColor = 'green';
     console.log(s.positionArray);
-    a.newPosition();
+    await a.newPosition(snake);
     a.draw();
     score++;
     scoreDisplay.textContent = score;
@@ -182,7 +198,7 @@ function appleDrawer_gameIncrementor(a, s) {
 }
 
 document.addEventListener('keydown', (e) => {
-  console.log(e.code);
+  // console.log(e);
   switch (e.code) {
     case 'ArrowUp':
       if (snake.positionArray[0] > 9) {
@@ -212,8 +228,56 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+gridButtons.forEach((gridButton) => {
+  gridButton.addEventListener('click', (e) => {
+    // console.log(e.target.id);
+    switch (e.target.id) {
+      case 'show-grid':
+        canvas.innerHTML = '';
+        for (let i = 0; i < 100; i++) {
+          let canvasCube = document.createElement('div');
+          canvasCube.classList.add('canvas-cubes');
+          // setAttribute() below automatically converts i as string even though it is an int.
+          canvasCube.setAttribute('id', i);
+          // ids.push(i);
+          canvasCube.textContent = i;
+          canvas.appendChild(canvasCube);
+        }
+        canvasCubes = document.querySelectorAll('.canvas-cubes');
+
+        let snake1 = new Snake([54], 'green');
+        let apple1 = new Apple(14, 'red');
+        snake1.draw();
+        apple1.draw();
+        break;
+      case 'dont-show-grid':
+        canvas.innerHTML = '';
+        for (let i = 0; i < 100; i++) {
+          let canvasCube = document.createElement('div');
+          canvasCube.classList.add('canvas-cubes');
+          canvasCube.style.border = 'none';
+          // setAttribute() below automatically converts i as string even though it is an int.
+          canvasCube.setAttribute('id', i);
+          // ids.push(i);
+          // canvasCube.textContent = i;
+          canvas.appendChild(canvasCube);
+        }
+
+        canvasCubes = document.querySelectorAll('.canvas-cubes');
+
+        let snake2 = new Snake([54], 'green');
+        let apple2 = new Apple(14, 'red');
+        snake2.draw();
+        apple2.draw();
+        break;
+      default:
+        break;
+    }
+  });
+});
+
 let snake = new Snake([54], 'green');
-let apple = new Apple(0, 'red');
+let apple = new Apple(14, 'red');
 
 snake.draw();
 // snake.move(1);
@@ -222,6 +286,6 @@ apple.draw();
 setInterval(() => {
   let result = appleDrawer_gameIncrementor(apple, snake);
   if (result) {
-    console.log('Apple should be redrawn.');
+    // console.log('Apple should be redrawn.');
   }
 }, 50);
