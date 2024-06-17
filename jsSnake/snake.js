@@ -1,6 +1,8 @@
 let canvas = document.getElementById('canvas');
 let scoreDisplay = document.getElementById('score-display');
 let gridButtons = document.querySelectorAll('.grid-button');
+let controlsDIV = document.getElementById('controls');
+let controlButtons = controlsDIV.querySelectorAll('button');
 // let ids = [];
 let score = 0;
 
@@ -89,6 +91,15 @@ class Snake {
     this.currentInterval = setInterval(() => {
       if (this.gameOver(increment)) {
         clearInterval(this.currentInterval);
+        for (let i = 0; i < canvasCubes.length; i++) {
+          if (canvasCubes[i].style.backgroundColor != 'red') {
+            canvasCubes[i].style.backgroundColor = '';
+          }
+        }
+        this.positionArray = [54];
+        this.draw();
+        score = 0;
+        scoreDisplay.textContent = score;
         // console.log(`Game Over due to ${increment}`);
         return;
       }
@@ -175,19 +186,19 @@ class Apple {
     }
   }
 }
-canvasCubes[-1] = document.createElement('div');
+// canvasCubes[-1] = document.createElement('div');
 async function appleDrawer_gameIncrementor(a, s) {
   if (a.position == s.positionArray[0]) {
-    console.log(s.positionArray);
+    // console.log(s.positionArray);
     a.undraw();
     s.add(s.positionArray[s.positionArray.length - 1]);
     // s.add(0);
     // s.add(-1);
-    console.log(s.positionArray);
+    // console.log(s.positionArray);
     s.draw();
     // console.log(canvasCubes[a.position].id);
     // canvasCubes[a.position].style.backgroundColor = 'green';
-    console.log(s.positionArray);
+    // console.log(s.positionArray);
     await a.newPosition(snake);
     a.draw();
     score++;
@@ -201,24 +212,20 @@ document.addEventListener('keydown', (e) => {
   // console.log(e);
   switch (e.code) {
     case 'ArrowUp':
-      if (snake.positionArray[0] > 9) {
-        snake.move(-10);
-      }
+      snake.move(-10);
       break;
     case 'ArrowDown':
-      if (snake.positionArray[0] < 90) {
-        snake.move(10);
-      }
+      snake.move(10);
       break;
     case 'ArrowLeft':
-      if (snake.positionArray[snake.positionArray.length - 1] % 10 !== 0) {
-        snake.move(-1);
-      }
+      // if (snake.positionArray[snake.positionArray.length - 1] % 10 !== 0) {
+      snake.move(-1);
+      // }
       break;
     case 'ArrowRight':
-      if (snake.positionArray[0] % 10 !== 9) {
-        snake.move(1);
-      }
+      // if (snake.positionArray[0] % 10 !== 9) {
+      snake.move(1);
+      // }
       break;
     case 'NumpadEnter':
       snake.pause();
@@ -276,6 +283,28 @@ gridButtons.forEach((gridButton) => {
   });
 });
 
+controlButtons.forEach((controlButton) => {
+  controlButton.addEventListener('click', (e) => {
+    // console.log(e.target.id);
+    switch (e.target.id) {
+      case 'up':
+        snake.move(-10);
+        break;
+      case 'down':
+        snake.move(10);
+        break;
+      case 'left':
+        snake.move(-1);
+        break;
+      case 'right':
+        snake.move(1);
+        break;
+      default:
+        break;
+    }
+  });
+});
+
 let snake = new Snake([54], 'green');
 let apple = new Apple(14, 'red');
 
@@ -289,3 +318,7 @@ setInterval(() => {
     // console.log('Apple should be redrawn.');
   }
 }, 50);
+
+console.log(
+  'Press ENTER to pause the game! Bug fix closed but you can still bother at `himanshujay261201@gmail.com`'
+);
