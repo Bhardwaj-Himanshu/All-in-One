@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="../static/engine_favicon.svg">
   <link rel="stylesheet" href="./engine.css">
   <title>Recommendation Engine</title>
 </head>
@@ -12,8 +13,9 @@
     <img id="cardImage" src="/static/engine_images/food/food_1.jpg" alt="Card Image">
   </div>
   <div class="button-container">
-    <button id="like-button" onclick="dislike_image()">Dislike</button>
-    <button id="dislike-button" onclick="like_image()">Like</button>
+    <button id="dislike-button" onclick="bias_updater(-1)">Dislike</button>
+    <button id="dislike-button" onclick="bias_updater(0.5)">Skip</button>
+    <button id="like-button" onclick="bias_updater(1)">Like</button>
   </div>
 
   <script src="./engine.js"></script>

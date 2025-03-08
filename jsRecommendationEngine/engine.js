@@ -6,6 +6,10 @@ let UH = {}
 let FS = {}
 // Next image value
 let NI = null
+// Adding a bias_counter which penalises a category if largely disliked
+let DI = 0
+// Logging time spent on a image for extra bias
+let log_time_spent = Date.now()
 // different base categories image source
 let F = []
 let H = []
@@ -19,6 +23,11 @@ function load_images(category, array, count) {
     }
     // console.log(`${category} images loaded:`, array);
     // returns None
+}
+
+function elapsed_time(){
+  time = (Date.now()-log_time_spent)/1000
+  return time
 }
 
 function global_history_updater(){
@@ -74,17 +83,23 @@ function final_score_updater(GH={}, UH={}) {
   console.log('FS now is:',FS)
 }
 
-function next_image(GH={}, UH={}, FS={}) {
-    let selectedSource = FS && Object.keys(FS).length > 0 ? FS : GH;
+function dominant_category(GH=GH,UH=UH){
+  let selectedSource = FS && Object.keys(FS).length > 0 ? FS : GH;
     
-    if (Object.keys(selectedSource).length === 0) {
-        console.log("FS and GH are empty! Cannot determine maxKey.");
-        return; // Exit the function early
-    }
+  if (Object.keys(selectedSource).length === 0) {
+      console.log("FS and GH are empty! Cannot determine maxKey.");
+      return; // Exit the function early
+  }
 
-    let maxKey = Object.keys(selectedSource).reduce((a, b) => (selectedSource[a] > selectedSource[b] ? a : b));
+  let maxKey = Object.keys(selectedSource).reduce((a, b) => (selectedSource[a] > selectedSource[b] ? a : b));
 
-    console.log(`Key with max value: ${maxKey}, Value: ${selectedSource[maxKey]}`);
+  console.log(`Key with max value: ${maxKey}, Value: ${selectedSource[maxKey]}`);
+  return maxKey;
+}
+
+function next_image(GH={}, UH={}, FS={}) {
+  
+  maxKey = dominant_category(GH=GH,UH=UH)
 
     let imagePath = "";
     switch (maxKey[0]) {  // Check first letter of maxKey
@@ -108,7 +123,6 @@ function next_image(GH={}, UH={}, FS={}) {
     }
 
     document.getElementById("cardImage").src = imagePath; // Update image
-    return NI = maxKey[0]? maxKey[0] : 'F'
 }
 
 // Load respective image paths in respective arrays
@@ -120,22 +134,53 @@ load_images(category='women',array=W,count=20)
 // Update global history on load of page
 global_history_updater()
 // Update FS
-final_score_updater()
+final_score_updater(GH=GH,UH=UH)
 // Show a image upon page load
-NI = next_image(GH,UH,FS)
+next_image(GH,UH,FS)
 
-function like_image(){
- user_history_updater(UH=UH,update_by=1,category_to_update=NI)
+function like_image(update_by=1,category_to_update=dominant_category(GH=GH,UH=UH)){
+ user_history_updater(UH=UH,update_by=update_by,category_to_update=category_to_update)
  final_score_updater(GH=GH,UH=UH)
- NI = next_image(GH=GH,UH=UH,FS=FS)
+ next_image(GH=GH,UH=UH,FS=FS)
 }
 
-function dislike_image(){
-  user_history_updater(UH=UH,update_by=-1,category_to_update=NI)
+function dislike_image(update_by=-1,category_to_update=dominant_category(GH=GH,UH=UH)){
+  user_history_updater(UH=UH,update_by=update_by,category_to_update=category_to_update)
   final_score_updater(GH=GH,UH=UH)
-  NI = next_image(GH=GH,UH=UH,FS=FS)
+  next_image(GH=GH,UH=UH,FS=FS)
 }
 
+function skip_image(update_by=null){
+  if(update_by = 0.5){
+    like_image(update_by=0.5,category_to_update=dominant_category(GH=GH,UH=UH))
+  }
+  else{
+    next_image(GH=GH,UH=UH,FS=FS)
+  }
+}
 
-
-
+function bias_updater(param = null) {
+  let time_spent = elapsed_time()
+  maxKey = dominant_category(GH=GH,UH=UH)
+  if (param === -1) {
+      DI += 1;
+      if (DI === 3) {
+          dislike_image(-2, maxKey); // Pass correct arguments
+      } else {
+          dislike_image(-1, maxKey);
+      }
+  } else if(param === 1) {
+      DI = 0
+      like_image(1,maxKey)
+  }
+  else{
+    DI = 0
+    if(time_spent >= 5){
+      skip_image(update_by = 0.5)
+    }
+    else{
+      skip_image()
+    }
+  }
+  log_time_spent = Date.now()
+}
