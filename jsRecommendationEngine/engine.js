@@ -15,7 +15,7 @@ let W = []
 
 function load_images(category, array, count) {
     for (let i = 1; i <= count; i++) {
-        array.push(`/static/engine_images/${category}/${category}_${i}.jpg`);
+        array.push(`../static/engine_images/${category}/${category}_${i}.jpg`);
     }
     // console.log(`${category} images loaded:`, array);
     // returns None
