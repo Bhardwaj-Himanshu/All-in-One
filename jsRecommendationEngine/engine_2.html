@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../static/engine_favicon.svg">
+    <link rel="stylesheet" href="./engine.css">
+    <title>Recommendation Engine</title>
+    <style>
+        body {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: monospace;
+        }
+        .wip {
+            font-size: 5rem;
+            white-space: pre;
+            position: absolute;
+            animation: moveWIP 3s linear infinite alternate;
+        }
+        @keyframes moveWIP {
+            from { transform: translateX(-50vw); }
+            to { transform: translateX(50vw); }
+        }
+    </style>
+</head>
+<body>
+    <pre class="wip">
+█ ██ █   ██ ██ ██  
+█ █  █   █    █  █  
+█ █  █   ██   █  █  
+█ █  █   █    █  █  
+█ ██ ██  ██   █  █  
+    </pre>
+<script src="./engine_2.js"></script>
+</body>
+</html>

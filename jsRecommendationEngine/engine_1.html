@@ -9,9 +9,15 @@
   <title>Recommendation Engine</title>
 </head>
 <body>
-  <div class="button-container">
-    <button onclick="location.href='./engine_1.html'">Dumb</button>
-    <button onclick="location.href='./engine_2.html'">Smarter</button>
+  <div class="card-container">
+    <img id="cardImage" src="/static/engine_images/food/food_1.jpg" alt="Card Image">
   </div>
+  <div class="button-container">
+    <button id="dislike-button" onclick="bias_updater(-1)">Dislike</button>
+    <button id="dislike-button" onclick="bias_updater(0.5)">Skip</button>
+    <button id="like-button" onclick="bias_updater(1)">Like</button>
+  </div>
+
+  <script src="./engine_1.js"></script>
 </body>
 </html>
