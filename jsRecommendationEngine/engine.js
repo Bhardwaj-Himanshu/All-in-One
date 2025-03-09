@@ -62,6 +62,13 @@ function global_history_updater(){
   console.log('GH now is:',GH)
 }
 
+function global_history_decay(GH=GH){
+ let maxValue = Object.keys(GH).reduce((a,b)=> (FS[a]>FS[b]? a:b))
+ if(GH[maxValue] > 3){
+  GH[maxValue] = GH[maxValue]*0.8
+ }
+}
+
 function user_history_updater(UH=UH,update_by,category_to_update){
   if (UH.hasOwnProperty(`${category_to_update}`)) {
     // console.log("Key exists");
@@ -70,7 +77,16 @@ function user_history_updater(UH=UH,update_by,category_to_update){
     // console.log("Key does not exist");
     UH[`${category_to_update}`] = update_by
   }
-  console.log('UH now is:',UH)
+  // console.log('UH now is:',UH)
+}
+
+function user_relevance_increaser(UH, FS, maxKey,secondHighest) {
+  Object.keys(FS).forEach((key) => {
+    if (key != maxKey && FS[maxKey] != FS[secondHighest]) {
+      UH[key] = (UH[key] || 0) + 1; // Increment by 1, initializing if necessary
+    }
+  });
+  console.log('UH after URI',UH)
 }
 
 function final_score_updater(GH={}, UH={}) {
@@ -80,26 +96,33 @@ function final_score_updater(GH={}, UH={}) {
       FS[key] = (GH[key]) + (UH[key]); // Handle undefined keys
     }
   }
-  console.log('FS now is:',FS)
+  // console.log('FS now is:',FS)
 }
 
-function dominant_category(GH=GH,UH=UH){
+function dominant_category(GH=GH, UH=UH) {
   let selectedSource = FS && Object.keys(FS).length > 0 ? FS : GH;
-    
+
   if (Object.keys(selectedSource).length === 0) {
       console.log("FS and GH are empty! Cannot determine maxKey.");
-      return; // Exit the function early
+      return null; // Exit the function early
   }
 
-  let maxKey = Object.keys(selectedSource).reduce((a, b) => (selectedSource[a] > selectedSource[b] ? a : b));
+  // Convert object into an array of [key, value] pairs and sort it by value (descending)
+  let sortedEntries = Object.entries(selectedSource).sort((a, b) => b[1] - a[1]);
 
+  // Get the highest and second highest keys
+  let maxKey = sortedEntries.length > 0 ? sortedEntries[0][0] : null;
+  let secondHighest = sortedEntries.length > 1 ? sortedEntries[1][1] : null;
+
+  // console.log('Dominant category returned',sortedEntries)
   console.log(`Key with max value: ${maxKey}, Value: ${selectedSource[maxKey]}`);
-  return maxKey;
+  return {'maxKey': maxKey, 'secondHighest': secondHighest};
 }
+
 
 function next_image(GH={}, UH={}, FS={}) {
   
-  maxKey = dominant_category(GH=GH,UH=UH)
+  let {maxKey,secondHighest} = dominant_category(GH=GH,UH=UH)
 
     let imagePath = "";
     switch (maxKey[0]) {  // Check first letter of maxKey
@@ -138,21 +161,21 @@ final_score_updater(GH=GH,UH=UH)
 // Show a image upon page load
 next_image(GH,UH,FS)
 
-function like_image(update_by=1,category_to_update=dominant_category(GH=GH,UH=UH)){
+function like_image(update_by=1,category_to_update=dominant_category(GH=GH,UH=UH).maxKey){
  user_history_updater(UH=UH,update_by=update_by,category_to_update=category_to_update)
  final_score_updater(GH=GH,UH=UH)
  next_image(GH=GH,UH=UH,FS=FS)
 }
 
-function dislike_image(update_by=-1,category_to_update=dominant_category(GH=GH,UH=UH)){
+function dislike_image(update_by=-1,category_to_update=dominant_category(GH=GH,UH=UH).maxKey){
   user_history_updater(UH=UH,update_by=update_by,category_to_update=category_to_update)
   final_score_updater(GH=GH,UH=UH)
   next_image(GH=GH,UH=UH,FS=FS)
 }
 
 function skip_image(update_by=null){
-  if(update_by = 0.5){
-    like_image(update_by=0.5,category_to_update=dominant_category(GH=GH,UH=UH))
+  if(update_by === 0.5){
+    like_image(update_by=0.5,category_to_update=dominant_category(GH=GH,UH=UH).maxKey)
   }
   else{
     next_image(GH=GH,UH=UH,FS=FS)
@@ -161,25 +184,48 @@ function skip_image(update_by=null){
 
 function bias_updater(param = null) {
   let time_spent = elapsed_time()
-  maxKey = dominant_category(GH=GH,UH=UH)
+  let { maxKey, secondHighest } = dominant_category(GH, UH);  // Call only once
+  global_history_decay(GH=GH)
   if (param === -1) {
-      DI += 1;
-      if (DI === 3) {
-          dislike_image(-2, maxKey); // Pass correct arguments
-      } else {
-          dislike_image(-1, maxKey);
-      }
+    DI += 1;
+    if (DI === 2) {
+      dislike_image(-2, maxKey); // Pass correct arguments
+      user_relevance_increaser(UH=UH,FS=FS,maxKey=maxKey,secondHighest=secondHighest)
+      final_score_updater(GH=GH,UH=UH)
+      console.log('Image was disliked twice in a row-->')
+      console.log('GH is now:',GH)
+      console.log('UH is now:',UH)
+      console.log('FS is now:',FS)
+    } else {
+      dislike_image(-1, maxKey);
+      console.log('Image was disliked once-->')
+      console.log('GH is now:',GH)
+      console.log('UH is now:',UH)
+      console.log('FS is now:',FS)
+    }
   } else if(param === 1) {
-      DI = 0
-      like_image(1,maxKey)
+    DI = 0
+    like_image(1,maxKey)
+    console.log('Image was liked once-->')
+      console.log('GH is now:',GH)
+      console.log('UH is now:',UH)
+      console.log('FS is now:',FS)
   }
   else{
     DI = 0
     if(time_spent >= 5){
       skip_image(update_by = 0.5)
+      console.log('Image was skipped after long watch >5s-->')
+      console.log('GH is now:',GH)
+      console.log('UH is now:',UH)
+      console.log('FS is now:',FS)
     }
     else{
       skip_image()
+      console.log('Image was skppied almost instantly-->')
+      console.log('GH is now:',GH)
+      console.log('UH is now:',UH)
+      console.log('FS is now:',FS)
     }
   }
   log_time_spent = Date.now()
