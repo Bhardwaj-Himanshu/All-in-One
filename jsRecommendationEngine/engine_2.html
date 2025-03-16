@@ -1,41 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/svg+xml" href="../static/engine_favicon.svg">
-    <link rel="stylesheet" href="./engine.css">
-    <title>Recommendation Engine</title>
-    <style>
-        body {
-            background-color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            font-family: monospace;
-        }
-        .wip {
-            font-size: 5rem;
-            white-space: pre;
-            position: absolute;
-            animation: moveWIP 3s linear infinite alternate;
-        }
-        @keyframes moveWIP {
-            from { transform: translateX(-50vw); }
-            to { transform: translateX(50vw); }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="../static/engine_favicon.svg">
+  <link rel="stylesheet" href="./engine.css">
+  <title>Recommendation Engine</title>
 </head>
 <body>
-    <pre class="wip">
-█ ██ █   ██ ██ ██  
-█ █  █   █    █  █  
-█ █  █   ██   █  █  
-█ █  █   █    █  █  
-█ ██ ██  ██   █  █  
-    </pre>
-<script src="./engine_2.js"></script>
+  <div class="card-container">
+    <img id="cardImage" src="../static/engine_images/white/0.jpg" alt="Card Image">
+  </div>
+  <div class="button-container">
+    <button id="dislike-button" onclick="bias_updater(-1)">Dislike</button>
+    <button id="dislike-button" onclick="bias_updater(0.5)">Skip</button>
+    <button id="like-button" onclick="bias_updater(1)">Like</button>
+  </div>
+
+  <script src="./engine_2.js"></script>
 </body>
 </html>
