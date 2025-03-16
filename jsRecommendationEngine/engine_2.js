@@ -24,30 +24,41 @@ function TM_generator(){
 }
 
 function TM_updater(UB, f, t) {
-    if (UH.length === 1) return null;
+    if (TM.length === 1) return null;
 
-    let change = (UB === 1) ? 0.15 : (UB === 0.5) ? 0.09 : -0.15;
-    let reduce = (UB === 1) ? 0.05 : (UB === 0.5) ? 0.03 : -0.05;
-
+    let weight = (UB === 1) ? 0.15 : (UB === 0.5) ? 0.09 : -0.15;
+    if (weight == -0.15 && UB == -2){
+        weight = -0.6
+    }
+    let N = TM[f].length;
+    
     if (f !== t) {
-        TM[f][t] = TM[f][t] + change
-        TM[f][f] = TM[f][f] + change
-
-        for (let i = 0; i < TM[f].length; i++) {
-            if (i !== t && i !== f) {
-                TM[f][i] = TM[f][i] - reduce;
+        // Apply weighted probability update
+        TM[f][t] = TM[f][t] + weight * (1 - TM[f][t]);
+        
+        let totalReduction = weight * TM[f][t] / (N - 1);
+        for (let i = 0; i < N; i++) {
+            if (i !== t) {
+                TM[f][i] = TM[f][i] * (1 - weight);
             }
         }
     } else {
-        TM[f][f] = 0, TM[f][f] + change;
+        // Self-transition update
+        TM[f][f] = TM[f][f] + weight * (1 - TM[f][f]);
         
-        for (let i = 0; i < TM[f].length; i++) {
+        let totalReduction = weight * TM[f][f] / (N - 1);
+        for (let i = 0; i < N; i++) {
             if (i !== f) {
-                TM[f][i] = TM[f][i] - reduce;
+                TM[f][i] = TM[f][i] * (1 - weight);
             }
         }
     }
-
+    
+    // Normalize row to ensure sum = 1
+    let rowSum = TM[f].reduce((sum, val) => sum + val, 0);
+    for (let i = 0; i < N; i++) {
+        TM[f][i] /= rowSum;
+    }
 }
 
 
@@ -58,7 +69,7 @@ function CS_updater(param=null){
 }
 
 // returns picked category
-function image_generator(){
+function image_generator(SC=false){
     if (UH.length == 0) {
     //  then change the CS to turn any category into 1 and multiply with TM to pick the next image
     let c = Math.floor(Math.random()*4)
@@ -66,31 +77,48 @@ function image_generator(){
     console.log(`Going from ${MP[c]}`)
     // Step to multiply with TM
     let picked_category = -Infinity
+    let second_picked_category = -Infinity
     let last_value = -Infinity
+    let second_last_value = -Infinity
     for(let i=0;i<TM[c].length;i++){
         if((TM[c][i]) > last_value){
             last_value = TM[c][i]
             picked_category = i
         }
     }
-    console.log(`Going to ${MP[picked_category]}`)
-    return {c,picked_category}
+    for(let j=0;j<TM[c].length;j++){
+        if((TM[c][j]) > second_last_value && TM[c][j]<last_value){
+            second_last_value = TM[c][j]
+            second_picked_category = j
+        }
+    }
+    console.log(`Going to ${MP[(SC ? second_picked_category:picked_category)]}`)
+    return {c,'picked_category':(SC ? second_picked_category:picked_category)}
     }
     else{
     // We have UH then directly multiply with TM to get next image
     let c = UH[UH.length-1]
     console.log(`Going from ${MP[UH[UH.length-1]]}`)
     // Step to multiply with TM
+    // Step to multiply with TM
     let picked_category = -Infinity
+    let second_picked_category = -Infinity
     let last_value = -Infinity
+    let second_last_value = -Infinity
     for(let i=0;i<TM[c].length;i++){
         if((TM[c][i]) > last_value){
             last_value = TM[c][i]
             picked_category = i
         }
     }
-    console.log(`Going to ${MP[picked_category]}`)
-    return {c,picked_category}
+    for(let j=0;j<TM[c].length;j++){
+        if((TM[c][j]) > second_last_value && TM[c][j]<last_value){
+            second_last_value = TM[c][j]
+            second_picked_category = j
+        }
+    }
+    console.log(`Going to ${MP[(SC ? second_picked_category:picked_category)]}`)
+    return {c,'picked_category':(SC ? second_picked_category:picked_category)}
     }
 }
 
@@ -130,40 +158,61 @@ console.log(UH);
 
 // Show the first image
 image_shower(picked_category);
+let counter = 0
+let second_category_counter = 0
 
 function bias_updater(param = null) {
     // Log the user action
     switch (param) {
         case -1:
+            counter += 1
             console.log('Dislike was clicked.');
             break;
         case 1:
+            counter = 0
             console.log('Like was clicked.');
             break;
         case 0.5:
+            counter = 0
             console.log('Skip was clicked.');
             break;
     }
-
-    // Generate the next image
-    let {c, picked_category} = image_generator();
-
-    // Update CS based on the new category
-    CS_updater(picked_category);
-    console.log(CS);
-
-    // Add the new category to user history
-    UH.push(picked_category);
-    console.log(UH);
-
-    // Show the new image
-    image_shower(picked_category);
-
     if (UH.length > 1) {
-        TM_updater(param, UH[UH.length - 2], UH[UH.length - 1]);
+        if(counter != 2){
+            TM_updater(param, UH[UH.length - 2], UH[UH.length - 1]);
+        }
+        else{
+            TM_updater(param = -2, UH[UH.length - 2], UH[UH.length - 1]);
+        }
     }
     
     console.log(TM);
+
+    let picked_category_passed = null
+    second_category_counter += 1
+    // Generate the next image
+    if(second_category_counter == 3){
+        let {c, picked_category} = image_generator(SC=true);
+        picked_category_passed = picked_category
+        second_category_counter = 0
+        console.log(`Second cat image was shown ${picked_category}`)
+    }
+    else{
+        let {c, picked_category} = image_generator(SC=false);
+        picked_category_passed = picked_category
+        console.log(`First cat image was shown ${picked_category}`)
+    }
+
+    // Update CS based on the new category
+    CS_updater(picked_category_passed);
+    console.log(CS);
+
+    // Add the new category to user history
+    UH.push(picked_category_passed);
+    console.log(UH);
+
+    // Show the new image
+    image_shower(picked_category_passed);
 }
 
 
