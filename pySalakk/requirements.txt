@@ -13,3 +13,5 @@ python-dateutil==2.9.0.post0
 
 # Optional but often useful for plots or visuals
 seaborn==0.13.2
+
+datasets==2.18.0
