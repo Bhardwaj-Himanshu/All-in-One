@@ -14,7 +14,7 @@ st.title("Salakk")
 # Step 1: Choose Data Source
 dataset_options = {
     "Upload my own CSV": None,
-    "Store Sales Time Series (t4tiana)": "t4tiana/store-sales-time-series-forecasting",
+    "Store Sales Time Series (t4tiana) - Train Split": "t4tiana/store-sales-time-series-forecasting",
     "Video Games Sales (JuanjoJ55)": "JuanjoJ55/video-games-sales",
 }
 
@@ -29,7 +29,13 @@ if choice == "Upload my own CSV":
     else:
         st.info("👆 Please upload a CSV file to proceed.")
         st.stop()
-else:
+elif choice == "Store Sales Time Series (t4tiana) - Train Split":
+    dataset_name = dataset_options[choice]
+    with st.spinner(f"Loading {choice}..."):
+        dataset = load_dataset(dataset_name, split="train")
+        df = dataset.to_pandas()
+    st.success(f"✅ Loaded {choice} from Hugging Face!")
+elif choice == "Video Games Sales (JuanjoJ55)":
     dataset_name = dataset_options[choice]
     with st.spinner(f"Loading {choice}..."):
         dataset = load_dataset(dataset_name, split="train")
@@ -37,8 +43,9 @@ else:
     st.success(f"✅ Loaded {choice} from Hugging Face!")
 
 # Step 3: Preview the DataFrame
-st.write("### Preview of your data:")
-st.dataframe(df)
+if df is not None:
+    st.write("### Preview of your data:")
+    st.dataframe(df)
 
 
 if df is not None:
