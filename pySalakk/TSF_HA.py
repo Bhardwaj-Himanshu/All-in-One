@@ -5,17 +5,43 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller, acf
 import matplotlib.pyplot as plt
+from datasets import load_dataset
 
+# Set Streamlit page config
 st.set_page_config(page_title="Salakk", page_icon="🔮")
 st.title("Salakk")
 
-# Step 1: Upload CSV
-uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+# Step 1: Choose Data Source
+dataset_options = {
+    "Upload my own CSV": None,
+    "Store Sales Time Series (t4tiana)": "t4tiana/store-sales-time-series-forecasting",
+    "Video Games Sales (JuanjoJ55)": "JuanjoJ55/video-games-sales",
+}
 
-if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
-    st.write("DataFrame preview:", df.head())
+choice = st.selectbox("Choose your data source:", list(dataset_options.keys()))
 
+df = None
+# Step 2: Load Data
+if choice == "Upload my own CSV":
+    uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
+    else:
+        st.info("👆 Please upload a CSV file to proceed.")
+        st.stop()
+else:
+    dataset_name = dataset_options[choice]
+    with st.spinner(f"Loading {choice}..."):
+        dataset = load_dataset(dataset_name, split="train")
+        df = dataset.to_pandas()
+    st.success(f"✅ Loaded {choice} from Hugging Face!")
+
+# Step 3: Preview the DataFrame
+st.write("### Preview of your data:")
+st.dataframe(df)
+
+
+if df is not None:
     columns = df.columns.tolist()
 
     st.write("Please select the date column in the CSV")
@@ -39,24 +65,68 @@ if uploaded_file is not None:
         st.success(f"🔍 Filtering data for: {selected_combo_label}")
 
     granularity = None
+
     if selected_forecast_columns:
-        df[date_column] = pd.to_datetime(df[date_column])
+        # Try to parse the date_column intelligently
+        date_formats = ["%Y-%m-%d", "%Y-%m", "%Y"]
+        parsed_successfully = False
+        used_format = None
+
+        for fmt in date_formats:
+            try:
+                df[date_column] = pd.to_datetime(df[date_column], format=fmt)
+                parsed_successfully = True
+                used_format = fmt
+                break
+            except Exception:
+                continue
+
+        if not parsed_successfully:
+            st.error("❌ Could not parse date column. Please ensure it's in YYYY-MM-DD, YYYY-MM, or YYYY format.")
+            st.stop()
+
+        # Extract date components based on format
         df["Year"] = df[date_column].dt.year
-        df["Month"] = df[date_column].dt.month
-        df["MonthStr"] = df[date_column].dt.strftime('%Y-%m')
-        df["Day"] = df[date_column].dt.day
-        df["Date"] = df[date_column].dt.date
 
-        st.write("Forecast at what level?")
-        granularity = st.radio("Forecast at what level?", ["Year", "Month", "Date"])
+        if used_format in ["%Y-%m", "%Y-%m-%d"]:
+            df["Month"] = df[date_column].dt.month
+            df["MonthStr"] = df[date_column].dt.strftime('%Y-%m')
+        else:
+            df["Month"] = None
+            df["MonthStr"] = None
 
+        if used_format == "%Y-%m-%d":
+            df["Day"] = df[date_column].dt.day
+            df["Date"] = df[date_column].dt.date
+        else:
+            df["Day"] = None
+            df["Date"] = None
+
+        # Safely create DateFull
         df["DateFull"] = pd.to_datetime(df[["Year", "Month", "Day"]], errors='coerce')
+
+        # Drop rows where transaction column is missing
         df.dropna(subset=[selected_trans_column], inplace=True)
 
+        # Detect available granularities
+        available_granularities = ["Year"]
+        if used_format in ["%Y-%m", "%Y-%m-%d"]:
+            available_granularities.append("Month")
+        if used_format == "%Y-%m-%d":
+            available_granularities.append("Date")
+
+        if len(available_granularities) == 1:
+            granularity = "Year"
+            st.info("📌 Only year-level dates detected. Forecasting limited to yearly granularity.")
+        else:
+            st.write("Forecast at what level?")
+            granularity = st.radio("Forecast at what level?", available_granularities)
+
+        # -------------------------- YEARLY AGGREGATION --------------------------
         if granularity == "Year":
-            min_year, max_year = sorted(df["Year"].unique())[0], sorted(df["Year"].unique())[-1]
-            selected_min_year = st.selectbox("Select Min Year", sorted(df["Year"].unique()))
-            selected_max_year = st.selectbox("Select Max Year", sorted(df["Year"].unique()))
+            years_available = sorted(df["Year"].unique())
+            selected_min_year = st.selectbox("Select Min Year", years_available)
+            selected_max_year = st.selectbox("Select Max Year", years_available[::-1])
 
             df = df[(df["Year"] >= selected_min_year) & (df["Year"] <= selected_max_year)]
             group_cols = selected_forecast_columns + ["Year"]
@@ -65,12 +135,12 @@ if uploaded_file is not None:
             st.write("🔢 Aggregated Year-wise Data")
             st.dataframe(agg_df)
 
+        # -------------------------- MONTHLY AGGREGATION --------------------------
         elif granularity == "Month":
             month_type = st.radio("Monthly aggregation:", ["Same value over years", "All values over years"])
-            df["Month"] = df[date_column].dt.month
-            df["Year"] = df[date_column].dt.year
-            all_months = sorted(df["Month"].unique())
+            all_months = sorted(df["Month"].dropna().unique())
             all_years = sorted(df["Year"].unique())
+
             selected_month = st.selectbox("Pick a month (1-12)", all_months)
             selected_min_year = st.selectbox("Select Min Year", all_years)
             selected_max_year = st.selectbox("Select Max Year", all_years[::-1])
@@ -88,14 +158,11 @@ if uploaded_file is not None:
             st.write("📆 Aggregated Month Data")
             st.dataframe(agg_df)
 
+        # -------------------------- DAILY AGGREGATION --------------------------
         elif granularity == "Date":
             date_type = st.radio("Daily aggregation:", ["Same value over years", "All values over years"])
-            df["Day"] = df[date_column].dt.day
-            df["Month"] = df[date_column].dt.month
-            df["Year"] = df[date_column].dt.year
-
-            all_days = sorted(df["Day"].unique())
-            all_months = sorted(df["Month"].unique())
+            all_days = sorted(df["Day"].dropna().unique())
+            all_months = sorted(df["Month"].dropna().unique())
             all_years = sorted(df["Year"].unique())
 
             selected_day = st.selectbox("Select Day", all_days)
@@ -115,6 +182,8 @@ if uploaded_file is not None:
 
             st.write("📅 Aggregated Day Data")
             st.dataframe(agg_df)
+
+
 
         st.write("Select forecasting method")
         forecast_method = st.selectbox("Choose forecast model:", ["naive", "mid", "ETS", "ARIMA"])
@@ -243,8 +312,8 @@ if uploaded_file is not None:
                     x_vals = agg_df["Year"]
                     forecast_x_vals = forecast_df["ds"].dt.year
                     ax.set_xlabel("Year")
-                    ax.set_xticks(x_vals.tolist() + forecast_x_vals.tolist())
-                    ax.set_xticklabels([str(y) for y in x_vals.tolist() + forecast_x_vals.tolist()])
+                    ax.set_xticks(sorted(list(set(x_vals.tolist() + forecast_x_vals.tolist()))))
+                    ax.set_xticklabels([str(y) for y in sorted(list(set(x_vals.tolist() + forecast_x_vals.tolist())))])
 
                 elif granularity == "Month":
                     x_vals = pd.to_datetime(agg_df["Year"].astype(str) + '-' + agg_df["Month"].astype(str).str.zfill(2))
@@ -262,20 +331,44 @@ if uploaded_file is not None:
                     ax.set_xlabel("Date")
                     ax.xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%d %b %Y'))  # E.g., 15 Jan 2018
 
+                # ⚡ Now loop through each category
+                if selected_forecast_columns:
+                    categories = agg_df[selected_forecast_columns[0]].unique()
+                else:
+                    categories = [None]
 
-                # Plot the original data
-                ax.plot(x_vals, agg_df[selected_trans_column], label="Original", color='blue')
+                for idx, cat in enumerate(categories):
+                    if cat is not None:
+                        cat_agg_df = agg_df[agg_df[selected_forecast_columns[0]] == cat]
+                        cat_forecast_df = forecast_df[forecast_df[selected_forecast_columns[0]] == cat]
+                    else:
+                        cat_agg_df = agg_df
+                        cat_forecast_df = forecast_df
 
-                # Plot the forecasted data with color-coded points
-                ax.plot(forecast_x_vals, forecast_df[selected_trans_column], label="Forecast", color=colors[0], linestyle='-', marker='x')
+                    # Handle x values again based on granularity
+                    if granularity == "Year":
+                        cat_x_vals = cat_agg_df["Year"]
+                        cat_forecast_x_vals = cat_forecast_df["ds"].dt.year
+                    elif granularity == "Month":
+                        cat_x_vals = pd.to_datetime(cat_agg_df["Year"].astype(str) + '-' + cat_agg_df["Month"].astype(str).str.zfill(2))
+                        cat_forecast_x_vals = pd.to_datetime(cat_forecast_df["ds"].dt.strftime('%Y-%m'))
+                    elif granularity == "Date":
+                        cat_x_vals = pd.to_datetime(
+                            cat_agg_df["Year"].astype(str) + '-' +
+                            cat_agg_df["Month"].astype(str).str.zfill(2) + '-' +
+                            cat_agg_df["Day"].astype(str).str.zfill(2)
+                        )
+                        cat_forecast_x_vals = cat_forecast_df["ds"]
 
-                # Add labels and legend
+                    # Plot original and forecast
+                    ax.plot(cat_x_vals, cat_agg_df[selected_trans_column], label=f"{cat} - Original", linestyle='-')
+                    ax.plot(cat_forecast_x_vals, cat_forecast_df[selected_trans_column], label=f"{cat} - Forecast", linestyle='--', marker='x')
+
+                # 🎨 Final beautification
                 ax.set_ylabel(selected_trans_column)
                 ax.legend()
-
-                # Show the plot
+                fig.autofmt_xdate()
                 st.pyplot(fig)
 
-
 else:
-    st.warning("Please upload a CSV file.")
+    st.warning("Please pick atleast one option and complete that.")
