@@ -6,6 +6,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller, acf
 import matplotlib.pyplot as plt
 from datasets import load_dataset
+import os
 
 # Set Streamlit page config
 st.set_page_config(page_title="Salakk", page_icon="🔮")
@@ -14,7 +15,7 @@ st.title("Salakk")
 # Step 1: Choose Data Source
 dataset_options = {
     "Upload my own CSV": None,
-    "Store Sales Time Series (t4tiana) - Train Split": "t4tiana/store-sales-time-series-forecasting",
+    "Transaction Data (Local CSV)": "transaction.csv",
     "Video Games Sales (JuanjoJ55)": "JuanjoJ55/video-games-sales",
 }
 
@@ -29,12 +30,14 @@ if choice == "Upload my own CSV":
     else:
         st.info("👆 Please upload a CSV file to proceed.")
         st.stop()
-elif choice == "Store Sales Time Series (t4tiana) - Train Split":
-    dataset_name = dataset_options[choice]
-    with st.spinner(f"Loading {choice}..."):
-        dataset = load_dataset(dataset_name, split="train")
-        df = dataset.to_pandas()
-    st.success(f"✅ Loaded {choice} from Hugging Face!")
+
+elif choice == "Transaction Data (Local CSV)":
+    with st.spinner("Loading Transaction Data from local CSV..."):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        transaction_path = os.path.join(current_dir, "transactions.csv")
+        df = pd.read_csv(transaction_path)
+    st.success("✅ Loaded Transaction Data from local CSV!")
+
 elif choice == "Video Games Sales (JuanjoJ55)":
     dataset_name = dataset_options[choice]
     with st.spinner(f"Loading {choice}..."):
@@ -46,6 +49,7 @@ elif choice == "Video Games Sales (JuanjoJ55)":
 if df is not None:
     st.write("### Preview of your data:")
     st.dataframe(df)
+
 
 
 if df is not None:
