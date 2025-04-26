@@ -15,8 +15,7 @@ st.title("Salakk")
 # Step 1: Choose Data Source
 dataset_options = {
     "Upload my own CSV": None,
-    "Transaction Data (Local CSV)": "transaction.csv",
-    "Video Games Sales (JuanjoJ55)": "JuanjoJ55/video-games-sales",
+    "Transaction Data (Local CSV)": "transaction.csv"
 }
 
 choice = st.selectbox("Choose your data source:", list(dataset_options.keys()))
@@ -37,13 +36,6 @@ elif choice == "Transaction Data (Local CSV)":
         transaction_path = os.path.join(current_dir, "transactions.csv")
         df = pd.read_csv(transaction_path)
     st.success("✅ Loaded Transaction Data from local CSV!")
-
-elif choice == "Video Games Sales (JuanjoJ55)":
-    dataset_name = dataset_options[choice]
-    with st.spinner(f"Loading {choice}..."):
-        dataset = load_dataset(dataset_name, split="train")
-        df = dataset.to_pandas()
-    st.success(f"✅ Loaded {choice} from Hugging Face!")
 
 # Step 3: Preview the DataFrame
 if df is not None:
