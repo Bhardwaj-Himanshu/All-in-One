@@ -1,0 +1,56 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* full viewport height */
+    margin: 0;      /* remove default body margin */
+    background-color: #f0f0f0; /* optional: for visual contrast */
+  }
+  
+  h1 {
+    margin-bottom: 20px;
+  }
+  
+  #game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
+  }
+  
+  .cell {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border: 2px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .cell.animate {
+    animation: pop 0.2s ease;
+  }
+  
+  .red-x {
+    color: red;
+  }
+  
+  .blue-o {
+    color: blue;
+  }
+  
+  @keyframes pop {
+    0% {
+      transform: scale(0.4);
+      opacity: 0.4;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
